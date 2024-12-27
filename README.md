@@ -18,9 +18,12 @@ Planned features for Penguin Mod include:
 - Fun mechanics and surprises centered around penguins!  
 
 ---
+![penguin_Converted_java](https://github.com/user-attachments/assets/62576258-5b6c-41a3-8844-76de073b173a)
 
+
+![penguin_Converted_java(1)](https://github.com/user-attachments/assets/80d04129-e036-4704-aa88-0518e870c4da)
 ## 💻 **Getting Started**  
-
+---
 ### Prerequisites  
 - **Minecraft**
 - **Fabric API** 
