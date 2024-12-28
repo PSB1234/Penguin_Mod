@@ -3,15 +3,15 @@
 	"id": "penguin-mod",
 	"version": "${version}",
 	"name": "penguin mod",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Mod that brings the charm and playfulness of penguins into your game",
 	"authors": [
-		"Me!"
+		"Oshino"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/PSB1234/Penguin_Mod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/penguin-mod/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -20,6 +20,9 @@
 		],
 		"fabric-datagen": [
 			"net.oshino.penguinmod.PenguinModDataGenerator"
+		],
+		"client": [
+			"net.oshino.penguinmod.PenguinModClient"
 		]
 	},
 	"mixins": [

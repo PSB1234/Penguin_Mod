@@ -31,7 +31,6 @@
 
 # Gradle build files
 /.gradle/
-/build/
 
 # Fabric API-specific files
 /.fabric/
