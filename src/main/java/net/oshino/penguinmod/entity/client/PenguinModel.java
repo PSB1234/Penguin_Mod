@@ -32,20 +32,20 @@ public class PenguinModel<T extends PenguinEntities> extends SinglePartEntityMod
     private final ModelPart right_feet;
     public PenguinModel(ModelPart root) {
         this.base = root.getChild("base");
-        this.upper = root.getChild("upper");
-        this.neck = root.getChild("neck");
-        this.face = root.getChild("face");
-        this.upper_beak = root.getChild("upper_beak");
-        this.lower_beak = root.getChild("lower_beak");
-        this.eyebrow = root.getChild("eyebrow");
-        this.lower = root.getChild("lower");
-        this.left_wing = root.getChild("left_wing");
-        this.right_wing = root.getChild("right_wing");
-        this.tail = root.getChild("tail");
-        this.stomach = root.getChild("stomach");
-        this.feets = root.getChild("feets");
-        this.left_feet = root.getChild("left_feet");
-        this.right_feet = root.getChild("right_feet");
+        this.upper = this.base.getChild("upper");
+        this.neck = this.upper.getChild("neck");
+        this.face = this.upper.getChild("face");
+        this.upper_beak = this.face.getChild("upper_beak");
+        this.lower_beak = this.face.getChild("lower_beak");
+        this.eyebrow = this.face.getChild("eyebrow");
+        this.lower = this.base.getChild("lower");
+        this.left_wing = this.lower.getChild("left_wing");
+        this.right_wing = this.lower.getChild("right_wing");
+        this.tail = this.lower.getChild("tail");
+        this.stomach = this.lower.getChild("stomach");
+        this.feets = this.base.getChild("feets");
+        this.left_feet = this.feets.getChild("left_feet");
+        this.right_feet = this.feets.getChild("right_feet");
     }
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
