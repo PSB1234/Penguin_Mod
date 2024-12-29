@@ -15,7 +15,7 @@ public class PenguinRenderer extends MobEntityRenderer<PenguinEntities,PenguinMo
 
     @Override
     public Identifier getTexture(PenguinEntities entity) {
-        return Identifier.of(PenguinMod.MOD_ID,"textures/entity/penguin/penguin.png");
+        return Identifier.of(PenguinMod.MOD_ID,"textures/penguin.png");
     }
 
     @Override

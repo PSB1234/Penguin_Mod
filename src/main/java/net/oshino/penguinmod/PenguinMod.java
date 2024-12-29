@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PenguinMod implements ModInitializer {
-	public static final String MOD_ID = "penguin";
+	public static final String MOD_ID = "penguin-mod";
 
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
