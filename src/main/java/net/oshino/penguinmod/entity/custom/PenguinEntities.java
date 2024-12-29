@@ -9,7 +9,9 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.world.ServerWorld;
@@ -32,9 +34,7 @@ public class PenguinEntities extends AnimalEntity {
             this.goalSelector.add(0, new PowderSnowJumpGoal(this, this.getWorld()));
             this.goalSelector.add(1,new AnimalMateGoal(this,1.00D));
             this.goalSelector.add(2,new TemptGoal(this,1.23D,
-                    (stack) -> {
-                        return stack.isIn(ItemTags.FISHES);
-                    }
+                    Ingredient.ofItems(Items.COD)
                     ,false));
             this.goalSelector.add(3,new FollowParentGoal(this,1.1D));
             this.goalSelector.add(4,new WanderAroundGoal(this,1.8D));
@@ -72,12 +72,12 @@ public class PenguinEntities extends AnimalEntity {
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
-        return stack.isIn(ItemTags.FISHES);
+        return stack.isOf(Items.COD);
     }
 
     @Nullable
     @Override
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return ModEntities.Penguin.create(world);
+        return ModEntities.PENGUIN.create(world);
     }
 }

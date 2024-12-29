@@ -10,7 +10,7 @@ import net.oshino.penguinmod.entity.custom.PenguinEntities;
 
 public class PenguinRenderer extends MobEntityRenderer<PenguinEntities,PenguinModel<PenguinEntities>> {
     public PenguinRenderer(EntityRendererFactory.Context context) {
-        super(context, new PenguinModel<>(context.getPart(PenguinModel.Penguin)), 0.75f);
+        super(context, new PenguinModel<>(context.getPart(PenguinModel.PENGUIN)), 0.75f);
     }
 
     @Override

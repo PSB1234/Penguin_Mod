@@ -12,8 +12,9 @@ import net.oshino.penguinmod.PenguinMod;
 import net.oshino.penguinmod.entity.custom.PenguinEntities;
 
 public class PenguinModel<T extends PenguinEntities> extends SinglePartEntityModel<T> {
-    public static final EntityModelLayer Penguin = new EntityModelLayer(Identifier.of(PenguinMod.MOD_ID,"penguin"),"main");
-    private final ModelPart root;
+    public static final EntityModelLayer PENGUIN = new EntityModelLayer(
+            Identifier.of(PenguinMod.MOD_ID,"penguin"),
+            "main");
     private final ModelPart base;
     private final ModelPart upper;
     private final ModelPart neck;
@@ -30,7 +31,6 @@ public class PenguinModel<T extends PenguinEntities> extends SinglePartEntityMod
     private final ModelPart left_feet;
     private final ModelPart right_feet;
     public PenguinModel(ModelPart root) {
-        this.root = root.getChild("root");
         this.base = root.getChild("base");
         this.upper = root.getChild("upper");
         this.neck = root.getChild("neck");
@@ -50,9 +50,7 @@ public class PenguinModel<T extends PenguinEntities> extends SinglePartEntityMod
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData root = modelPartData.addChild("root", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
-
-        ModelPartData base = root.addChild("base", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
+        ModelPartData base = modelPartData.addChild("base", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
 
         ModelPartData upper = base.addChild("upper", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, -24.0F, 0.0F));
 
@@ -113,11 +111,11 @@ public class PenguinModel<T extends PenguinEntities> extends SinglePartEntityMod
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
-        root.render(matrices, vertexConsumer, light, overlay,color);
+        base.render(matrices, vertexConsumer, light, overlay,color);
     }
     @Override
     public ModelPart getPart(){
-        return root;
+        return base;
     }
 
 }

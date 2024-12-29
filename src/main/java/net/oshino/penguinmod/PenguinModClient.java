@@ -11,7 +11,7 @@ import net.oshino.penguinmod.entity.client.PenguinRenderer;
 public class PenguinModClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        EntityModelLayerRegistry.registerModelLayer(PenguinModel.Penguin,PenguinModel::getTexturedModelData);
-        EntityRendererRegistry.register(ModEntities.Penguin, PenguinRenderer::new);
+        EntityModelLayerRegistry.registerModelLayer(PenguinModel.PENGUIN,PenguinModel::getTexturedModelData);
+        EntityRendererRegistry.register(ModEntities.PENGUIN, PenguinRenderer::new);
     }
 }

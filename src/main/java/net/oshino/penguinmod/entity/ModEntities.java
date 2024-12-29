@@ -9,7 +9,7 @@ import net.oshino.penguinmod.PenguinMod;
 import net.oshino.penguinmod.entity.custom.PenguinEntities;
 
 public class ModEntities {
-    public static final EntityType<PenguinEntities> Penguin  = Registry.register(
+    public static final EntityType<PenguinEntities> PENGUIN  = Registry.register(
             Registries.ENTITY_TYPE,
             Identifier.of(PenguinMod.MOD_ID,"penguin"),
             EntityType.Builder.create(PenguinEntities::new, SpawnGroup.CREATURE)
