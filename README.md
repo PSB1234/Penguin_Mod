@@ -18,11 +18,12 @@ Planned features for Penguin Mod include:
 - Fun mechanics and surprises centered around penguins!  
 
 ---
-![penguin_Converted_java](https://github.com/user-attachments/assets/62576258-5b6c-41a3-8844-76de073b173a)
-
-
-![penguin_Converted_java(1)](https://github.com/user-attachments/assets/80d04129-e036-4704-aa88-0518e870c4da)
-## 💻 **Getting Started**  
+### Model 
+![Adele_Penguin](https://github.com/user-attachments/assets/13f55e22-b371-4891-a3b6-957ae9d60cee)
+---
+---
+### Walking Animation
+![Adele_Penguin(1)](https://github.com/user-attachments/assets/f6b6e93c-049e-4821-87c0-e4ad2c7ad432)## 💻 **Getting Started**  
 ---
 ### Prerequisites  
 - **Minecraft**
