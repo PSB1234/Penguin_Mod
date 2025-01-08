@@ -6,20 +6,20 @@ import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.oshino.penguinmod.PenguinMod;
-import net.oshino.penguinmod.entity.custom.PenguinEntities;
+import net.oshino.penguinmod.entity.custom.PenguinEntity;
 
-public class PenguinRenderer extends MobEntityRenderer<PenguinEntities,PenguinModel<PenguinEntities>> {
+public class PenguinRenderer extends MobEntityRenderer<PenguinEntity,PenguinModel<PenguinEntity>> {
     public PenguinRenderer(EntityRendererFactory.Context context) {
-        super(context, new PenguinModel<>(context.getPart(PenguinModel.PENGUIN)), 0.75f);
+        super(context, new PenguinModel<>(context.getPart(PenguinModel.PENGUIN)), 0.2f);
     }
 
     @Override
-    public Identifier getTexture(PenguinEntities entity) {
+    public Identifier getTexture(PenguinEntity entity) {
         return Identifier.of(PenguinMod.MOD_ID,"textures/penguin.png");
     }
 
     @Override
-    public void render(PenguinEntities livingEntity, float f, float g, MatrixStack matrixStack,
+    public void render(PenguinEntity livingEntity, float f, float g, MatrixStack matrixStack,
                        VertexConsumerProvider vertexConsumerProvider, int i) {
         if(livingEntity.isBaby()) {
             matrixStack.scale(0.5f, 0.5f, 0.5f);

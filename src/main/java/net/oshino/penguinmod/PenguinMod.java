@@ -5,7 +5,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 
 import net.oshino.penguinmod.entity.ModEntities;
-import net.oshino.penguinmod.entity.custom.PenguinEntities;
+import net.oshino.penguinmod.entity.custom.PenguinEntity;
+import net.oshino.penguinmod.world.gen.MobEntitySpawns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,11 @@ public class PenguinMod implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+		MobEntitySpawns.addPenguinSpawns();
+
 		ModEntities.registerModEntities();
 
-		FabricDefaultAttributeRegistry.register(ModEntities.PENGUIN, PenguinEntities.createAttributes());
+		FabricDefaultAttributeRegistry.register(ModEntities.PENGUIN, PenguinEntity.createAttributes());
 
 	}
 }

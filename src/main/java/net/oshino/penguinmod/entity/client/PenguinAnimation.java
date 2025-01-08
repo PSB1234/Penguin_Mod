@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.animation.Transformation;
 
 public class PenguinAnimation {
 
+
     public static final Animation WALKING = Animation.Builder.create(1.375f).looping()
             .addBoneAnimation("left_foot",
                     new Transformation(Transformation.Targets.TRANSLATE,
@@ -94,27 +95,27 @@ public class PenguinAnimation {
                                     Transformation.Interpolations.CUBIC)))
             .addBoneAnimation("left_flipper",
                     new Transformation(Transformation.Targets.ROTATE,
-                            new Keyframe(0f, AnimationHelper.createRotationalVector(348.14f, -19.87f, -46.41f),
+                            new Keyframe(0f, AnimationHelper.createRotationalVector(5.64f, -19.87f, -46.41f),
                                     Transformation.Interpolations.CUBIC),
-                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(328.14f, -19.87f, -46.41f),
+                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(-12.5f, -19.87f, -46.41f),
                                     Transformation.Interpolations.CUBIC),
-                            new Keyframe(1.1676667f, AnimationHelper.createRotationalVector(348.14f, -19.87f, -46.41f),
-                                    Transformation.Interpolations.CUBIC),
-                            new Keyframe(1.375f, AnimationHelper.createRotationalVector(348.14f, -19.87f, -46.41f),
+                            new Keyframe(1.375f, AnimationHelper.createRotationalVector(5.64f, -19.87f, -46.41f),
                                     Transformation.Interpolations.CUBIC)))
             .addBoneAnimation("right_flipper",
                     new Transformation(Transformation.Targets.TRANSLATE,
-                            new Keyframe(0f, AnimationHelper.createTranslationalVector(0f, -1f, 0f),
+                            new Keyframe(0f, AnimationHelper.createTranslationalVector(-1f, -1f, 0f),
                                     Transformation.Interpolations.CUBIC),
-                            new Keyframe(1.1676667f, AnimationHelper.createTranslationalVector(0f, -1f, 0f),
+                            new Keyframe(0.5f, AnimationHelper.createTranslationalVector(-0.09f, 0.08f, 0f),
+                                    Transformation.Interpolations.CUBIC),
+                            new Keyframe(1.375f, AnimationHelper.createTranslationalVector(-1f, -1f, 0f),
                                     Transformation.Interpolations.CUBIC)))
             .addBoneAnimation("right_flipper",
                     new Transformation(Transformation.Targets.ROTATE,
-                            new Keyframe(0f, AnimationHelper.createRotationalVector(-12.86f, -26.34f, 67.09f),
+                            new Keyframe(0f, AnimationHelper.createRotationalVector(-25f, 0f, 45f),
                                     Transformation.Interpolations.CUBIC),
-                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(-18.24f, -9.6f, 56.27f),
+                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(12.5f, 0f, 45f),
                                     Transformation.Interpolations.CUBIC),
-                            new Keyframe(1.1676667f, AnimationHelper.createRotationalVector(-12.86f, -26.34f, 67.09f),
+                            new Keyframe(1.375f, AnimationHelper.createRotationalVector(-25f, 0f, 45f),
                                     Transformation.Interpolations.CUBIC))).build();
     public static final Animation HAPPY = Animation.Builder.create(0.5f)
             .addBoneAnimation("left_flipper",
@@ -232,11 +233,11 @@ public class PenguinAnimation {
                                     Transformation.Interpolations.LINEAR)))
             .addBoneAnimation("right_flipper",
                     new Transformation(Transformation.Targets.ROTATE,
-                            new Keyframe(0f, AnimationHelper.createRotationalVector(0f, 0f, 122.5f),
+                            new Keyframe(0f, AnimationHelper.createRotationalVector(0f, 0f, 125f),
                                     Transformation.Interpolations.LINEAR),
-                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(0f, 0f, 60f),
+                            new Keyframe(0.5f, AnimationHelper.createRotationalVector(0f, 0f, 55f),
                                     Transformation.Interpolations.LINEAR),
-                            new Keyframe(1f, AnimationHelper.createRotationalVector(0f, 0f, 122.5f),
+                            new Keyframe(1f, AnimationHelper.createRotationalVector(0f, 0f, 125f),
                                     Transformation.Interpolations.LINEAR))).build();
     public static final Animation DROPING = Animation.Builder.create(1f)
             .addBoneAnimation("base",
@@ -287,6 +288,6 @@ public class PenguinAnimation {
                     new Transformation(Transformation.Targets.ROTATE,
                             new Keyframe(0f, AnimationHelper.createRotationalVector(0f, 0f, 0f),
                                     Transformation.Interpolations.LINEAR),
-                            new Keyframe(1f, AnimationHelper.createRotationalVector(0f, 0f, 70f),
+                            new Keyframe(1f, AnimationHelper.createRotationalVector(0f, 0f, 50f),
                                     Transformation.Interpolations.LINEAR))).build();
 }
