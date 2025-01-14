@@ -42,7 +42,6 @@ Planned features for Penguin Mod include:
 1. Clone the repository:  
    ```bash  
    git clone https://github.com/yourusername/penguin-mod.git  
-   cd penguin-mod  
    ```  
 2. Build the project:  
    ```bash  
