@@ -1,5 +1,6 @@
 package net.oshino.penguinmod.entity.custom;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.control.MoveControl;
@@ -21,7 +22,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
@@ -51,7 +51,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     // private static final Ingredient TEMPTATION_ITEMS = Ingredient.ofItems(Items.COD, Items.SALMON,Items.INK_SAC,Items.GLOW_INK_SAC);
 
     // Predicate for the penguin to follow the Mobs
-    public static final Predicate<LivingEntity> FOLLOW_TAMED_PREDICATE = entity -> {
+    public static final Predicate<LivingEntity> Penguin_Food = entity -> {
         EntityType<?> entityType = entity.getType();
         return entityType == EntityType.COD || entityType == EntityType.SALMON || entityType == EntityType.SQUID||
                 entityType == EntityType.GLOW_SQUID || entityType == EntityType.TROPICAL_FISH;
@@ -142,10 +142,10 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     @Override
     protected void initGoals() {
 
-        this.goalSelector.add(1,new PenguinHuntGoal(this, 1.2));
-        this.goalSelector.add(1,new PenguinEntity.PenguinEscapeDangerGoal(this,1.2F));
-        this.goalSelector.add(2,new TemptGoal(this,1.23D,stack ->stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
-        this.goalSelector.add(3,new WanderAroundGoal(this,1D));
+        this.goalSelector.add(1,new PenguinEntity.PenguinHuntGoal(this, 1.2));
+        this.goalSelector.add(2,new PenguinEntity.PenguinEscapeDangerGoal(this,1.2F));
+        this.goalSelector.add(3,new TemptGoal(this,1.23D,stack ->stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
+        this.goalSelector.add(4,new WanderAroundGoal(this,1D));
 
 
     }
@@ -193,10 +193,40 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         return ModEntities.PENGUIN.create(world);
     }
 
+    //Find the nearest Land
+
+    public static BlockPos findNearestLand(Entity entity, int radius) {
+        World world = entity.getWorld();
+        BlockPos.Mutable checkPos = new BlockPos.Mutable();
+
+        BlockPos entityPos = entity.getBlockPos();
+        int waterLevel = entityPos.getY(); // Start checking at the entity's current water level
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                // Scan from the current water level upwards to find land
+                for (int y = waterLevel; y <= waterLevel + 20; y++) {
+                    checkPos.set(entityPos.getX() + x, y, entityPos.getZ() + z);
+                    BlockState blockState = world.getBlockState(checkPos);
+
+                    // Check if it's solid land and there's air above it
+                    if (isSolidLand(blockState,world,checkPos) && world.isAir(checkPos.up())) {
+                        return checkPos.toImmutable();
+                    }
+                }
+            }
+        }
+
+        return null; // No land found
+    }
+    // if the block is solid land
+    private static boolean isSolidLand(BlockState blockState, World world, BlockPos checkPos) {
+        return blockState.isOf(Blocks.GRASS_BLOCK) || blockState.isOf(Blocks.DIRT) ||
+                blockState.isOf(Blocks.SAND) || blockState.isSolidBlock(world, checkPos) ;
+    }
     // Method to make the penguin jump out of water
     private void jumpOutOfWater() {
-        this.setVelocity(this.getVelocity().add(0.0D, 0.05D, 0.0D)); // Jump upwards
-        this.playSound(SoundEvents.ENTITY_DOLPHIN_JUMP, 1.0F, 1.0F); // Play jump sound
+        this.setVelocity(this.getVelocity().add(0.0D, 0.05D, 0.0D));
     }
     //Penguin travel
     @Override
@@ -209,6 +239,20 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             // Check oxygen level and jump out if low
             // Threshold for low oxygen
             if (this.getAir() < 20) {
+                BlockPos pos = findNearestLand(this, 10);
+                if(pos != null){
+                    this.setLandBound(true);
+                    this.setTravelling(false);
+                    this.setTravelPos(pos);
+                    this.jumpOutOfWater();
+                }else{
+                    BlockPos randomTravelPos = this.getBlockPos().add(
+                            this.random.nextInt(16) - 8,
+                            this.random.nextInt(8) - 4,
+                            this.random.nextInt(16) - 8
+                    );
+                    this.setTravelPos(randomTravelPos);
+                }
                 this.jumpOutOfWater();
             } else if (this.getTarget() == null && !this.isLandBound()) {
                 this.setVelocity(this.getVelocity().add(0.0D, -0.005D, 0.0D));
@@ -294,29 +338,11 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         // Reduce hunger every 5 seconds
         if (this.age % 100 == 0) {
             this.reduceHunger();
-            System.out.println("Hunger Level: " + this.getHungerLevel());
         }
     }
 
     //Custom Penguin goals
 
-    //Penguin wander in land goal
-//    static class WanderOnLandGoal extends WanderAroundGoal {
-//        private final PenguinEntity penguin;
-//        public WanderOnLandGoal(PenguinEntity penguin, double speed) {
-//            super(penguin, speed);
-//            this.penguin = penguin;
-//        }
-//        @Override
-//        public boolean canStart() {
-//            return !this.mob.isTouchingWater() && !this.penguin.isLandBound() && super.canStart();
-//        }
-//
-//        @Override
-//        public boolean shouldContinue() {
-//            return !this.mob.isTouchingWater() && !this.penguin.isLandBound() && super.shouldContinue();
-//        }
-//    }
     //penguin escape danger goal
 
     static class PenguinEscapeDangerGoal extends EscapeDangerGoal{
@@ -394,7 +420,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             List<LivingEntity> nearbyEntities = this.penguin.getWorld().getEntitiesByClass(
                     LivingEntity.class,
                     this.penguin.getBoundingBox().expand(10.0),
-                    FOLLOW_TAMED_PREDICATE
+                    Penguin_Food
             );
             if (!nearbyEntities.isEmpty()) {
                 this.target = nearbyEntities.getFirst(); // Select the first valid target
