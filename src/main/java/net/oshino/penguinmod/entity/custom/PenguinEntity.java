@@ -1,5 +1,6 @@
 package net.oshino.penguinmod.entity.custom;
 
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -15,16 +16,21 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.*;
 import net.oshino.penguinmod.entity.ModEntities;
 import net.oshino.penguinmod.util.ModTags;
 import org.jetbrains.annotations.Nullable;
@@ -34,22 +40,25 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public class PenguinEntity extends TameableEntity implements Angerable {
+    // Penguin Digging Ice or Snow Counter
+    int diggingCounter;
     // Penguin Hunger Level
     private int hungerLevel = 100;
+    // Penguin Swimming State
+    private boolean isSwimming = false;
     // Animation State for the penguin
     public final AnimationState idleAnimationState = new AnimationState();
     private int idleAnimationTimeOut = 0;
-    //Penguins Oxygen Capacity
-    public static final int MAX_AIR = 3600;
+    //Penguin Digging Ice or Snow (Boolean)
+    private static final TrackedData<Boolean> DIGGING_ICE_OR_SNOW = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     //TravelPos is random position for the penguin to travel to in water
     private static final TrackedData<BlockPos> TRAVEL_POS = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BLOCK_POS);
     //Penguin is travelling in water or not (Boolean)
     private static  final TrackedData<Boolean> TRAVELLING = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     // Penguin is in water mode or Land mode (Boolean)
     private static final TrackedData<Boolean> Land_Bound = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    // Items that the penguin will follow
-    // private static final Ingredient TEMPTATION_ITEMS = Ingredient.ofItems(Items.COD, Items.SALMON,Items.INK_SAC,Items.GLOW_INK_SAC);
-
+//    //Penguin has Egg or not (Boolean)
+//    private static final TrackedData<Boolean> HAS_EGG = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     // Predicate for the penguin to follow the Mobs
     public static final Predicate<LivingEntity> Penguin_Food = entity -> {
         EntityType<?> entityType = entity.getType();
@@ -72,19 +81,40 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     void setTravelPos(BlockPos pos) {
         this.dataTracker.set(TRAVEL_POS, pos);
     }
-
+//    public boolean hasEgg() {
+//        return this.dataTracker.get(HAS_EGG);
+//    }
+//    void setHasEgg(boolean hasEgg) {
+//        this.dataTracker.set(HAS_EGG, hasEgg);
+//    }
     boolean isTravelling() {
         return this.dataTracker.get(TRAVELLING);
     }
-    void setTravelling(boolean travelling) {
-        this.dataTracker.set(TRAVELLING, travelling);
-    }
+    void setTravelling(boolean travelling) {this.dataTracker.set(TRAVELLING, travelling);}
     boolean isLandBound() {
         return this.dataTracker.get(Land_Bound);
     }
     void setLandBound(boolean landBound) {
         this.dataTracker.set(Land_Bound, landBound);
     }
+    public boolean isDiggingIceOrSnow() {
+        return this.dataTracker.get(DIGGING_ICE_OR_SNOW);
+    }
+
+    void setDiggingIceOrSnow(boolean diggingIceOrSnow) {
+        this.diggingCounter = diggingIceOrSnow ? 1 : 0;
+        this.dataTracker.set(DIGGING_ICE_OR_SNOW, diggingIceOrSnow);
+    }
+
+    public boolean isSwimming() {
+        return isSwimming;
+    }
+
+    public void setSwimming(boolean swimming) {
+        this.isSwimming = swimming;
+    }
+
+
     //Penguin Water Collision is Disabled
     @Override
     public boolean isPushedByFluids() {
@@ -94,11 +124,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         return this.hungerLevel;
     }
     // Decrease the hunger level of the penguin
-    public void reduceHunger() {
-        if (this.hungerLevel > 0) {
-            this.hungerLevel--;
-        }
-    }
+    public void reduceHunger() {if (this.hungerLevel > 0) this.hungerLevel--;}
     // Increase the hunger level of the penguin
     public void increaseHunger(int amount) {
         this.hungerLevel = Math.min(this.hungerLevel + amount, 100);
@@ -110,6 +136,8 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         builder.add(TRAVEL_POS, BlockPos.ORIGIN);
         builder.add(TRAVELLING, false);
         builder.add(Land_Bound, false);
+        builder.add(DIGGING_ICE_OR_SNOW, false);
+//        builder.add(HAS_EGG, false);
         this.moveControl = new PenguinEntity.PenguinMoveControl(this);
 
     }
@@ -117,6 +145,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
+//        nbt.putBoolean("HasEgg", this.hasEgg());
         nbt.putInt("TravelPosX", this.getTravelPos().getX());
         nbt.putInt("TravelPosY", this.getTravelPos().getY());
         nbt.putInt("TravelPosZ", this.getTravelPos().getZ());
@@ -125,6 +154,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
+//        this.setHasEgg(nbt.getBoolean("HasEgg"));
         int x = nbt.getInt("TravelPosX");
         int y = nbt.getInt("TravelPosY");
         int z = nbt.getInt("TravelPosZ");
@@ -141,13 +171,18 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     // init Goals for the penguin
     @Override
     protected void initGoals() {
-
-        this.goalSelector.add(1,new PenguinEntity.PenguinHuntGoal(this, 1.2));
-        this.goalSelector.add(2,new PenguinEntity.PenguinEscapeDangerGoal(this,1.2F));
-        this.goalSelector.add(3,new TemptGoal(this,1.23D,stack ->stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
-        this.goalSelector.add(4,new WanderAroundGoal(this,1D));
-
-
+        this.goalSelector.add(1,new AnimalMateGoal(this, 1.0));
+//        this.goalSelector.add(1,new PenguinEntity.MateGoal(this, 1.0));
+        this.goalSelector.add(2,new PenguinEntity.PenguinHuntGoal(this, 1.2));
+        this.goalSelector.add(3,new PenguinEntity.PenguinEscapeDangerGoal(this,1.2F));
+        this.goalSelector.add(4,new TemptGoal(this,1.23D,stack ->stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
+        this.goalSelector.add(5,new WanderAroundGoal(this,1D));
+        this.targetSelector.add(1, new TrackOwnerAttackerGoal(this));
+        this.targetSelector.add(2, new AttackWithOwnerGoal(this));
+        this.targetSelector.add(3, new RevengeGoal(this).setGroupRevenge());
+        this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(5, new ActiveTargetGoal<>(this, AbstractSkeletonEntity.class, false));
+        this.targetSelector.add(6, new UniversalAngerGoal<>(this, true));
     }
 
     // Register the data for the penguin
@@ -192,9 +227,17 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
         return ModEntities.PENGUIN.create(world);
     }
-
+    //favourability of land
+    @Override
+    public float getPathfindingFavor(BlockPos pos, WorldView world) {
+        // Check if the position is on land (not in water)
+        if (this.isLandBound() && !world.getFluidState(pos).isIn(FluidTags.WATER)) {
+            return 10.0F;  // Favor land positions
+        }else {
+        return 1.0F;  // Less favorable for water or non-land positions
+    }
+}
     //Find the nearest Land
-
     public static BlockPos findNearestLand(Entity entity, int radius) {
         World world = entity.getWorld();
         BlockPos.Mutable checkPos = new BlockPos.Mutable();
@@ -342,9 +385,101 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     }
 
     //Custom Penguin goals
+    //Penguin mate Goal for breeding
+    static class MateGoal extends AnimalMateGoal {
+        private final PenguinEntity penguin;
+
+        MateGoal(PenguinEntity penguin, double speed) {
+            super(penguin, speed);
+            this.penguin = penguin;
+        }
+
+        @Override
+        public boolean canStart() {
+            return super.canStart() ;
+        }
+
+        @Override
+        protected void breed() {
+            ServerPlayerEntity serverPlayerEntity = this.animal.getLovingPlayer();
+            if (serverPlayerEntity == null && this.mate.getLovingPlayer() != null) serverPlayerEntity = this.mate.getLovingPlayer();
+
+            if (serverPlayerEntity != null) {
+                serverPlayerEntity.incrementStat(Stats.ANIMALS_BRED);
+                Criteria.BRED_ANIMALS.trigger(serverPlayerEntity, this.animal, this.mate, null);
+            }
+
+            this.animal.setBreedingAge(6000);
+            this.mate.setBreedingAge(6000);
+            this.animal.resetLoveTicks();
+            this.mate.resetLoveTicks();
+            Random random = this.animal.getRandom();
+            if (this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+                this.world.spawnEntity(new ExperienceOrbEntity(this.world, this.animal.getX(), this.animal.getY(), this.animal.getZ(), random.nextInt(7) + 1));
+            }
+            PenguinEntity babyPenguin = ModEntities.PENGUIN.create(this.world);
+            if (babyPenguin != null) {
+                babyPenguin.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
+                babyPenguin.setBaby(true);
+                this.world.spawnEntity(babyPenguin);
+            }
+        }
+    }
+    //Lay Egg Goal for the penguin
+    //NEED TO MAKE PENGUIN EGG BLOCK
+//    static class LayEggGoal extends MoveToTargetPosGoal {
+//        private final PenguinEntity penguin;
+//
+//        LayEggGoal(PenguinEntity penguin, double speed) {
+//            super(penguin, speed, 16);
+//            this.penguin = penguin;
+//        }
+//
+//        @Override
+//        public boolean canStart() {
+//            // Start if the penguin has an egg
+//            return this.penguin.hasEgg() ? super.canStart() : false;
+//        }
+//
+//        @Override
+//        public boolean shouldContinue() {
+//            // Continue if the penguin still has an egg
+//            return super.shouldContinue() && this.penguin.hasEgg();
+//        }
+//
+//        @Override
+//        public void tick() {
+//            super.tick();
+//            BlockPos blockPos = this.penguin.getBlockPos();
+//            if (!this.penguin.isTouchingWater() && this.hasReached()) {
+//                if (this.penguin.diggingCounter < 1) {
+//                    this.penguin.setDiggingIceOrSnow(true);
+//                } else if (this.penguin.diggingCounter> this.getTickCount(200)) {
+//                    World world = this.penguin.getWorld();
+//                    world.playSound(null, blockPos, SoundEvents.ENTITY_TURTLE_LAY_EGG, SoundCategory.BLOCKS, 0.3F, 0.9F + world.random.nextFloat() * 0.2F);
+//                    BlockPos blockPos2 = this.targetPos.up();
+//                    BlockState blockState = Blocks.PENGUIN_EGG.getDefaultState().with(PenguinEggBlock.EGGS, Integer.valueOf(this.penguin.random.nextInt(2) + 1));
+//                    world.setBlockState(blockPos2, blockState, Block.NOTIFY_ALL);
+//                    world.emitGameEvent(GameEvent.BLOCK_PLACE, blockPos2, GameEvent.Emitter.of(this.penguin, blockState));
+//                    this.penguin.setHasEgg(false);
+//                    this.penguin.setDiggingIceOrSnow(false);
+//                    this.penguin.setLoveTicks(600);
+//                }
+//
+//                if (this.penguin.isDiggingIceOrSnow()) {
+//                    this.penguin.diggingCounter++;
+//                }
+//            }
+//        }
+//
+//        @Override
+//        protected boolean isTargetPos(WorldView world, BlockPos pos) {
+//            // Check for valid ice/snow block instead of sand
+//            return !world.isAir(pos.up()) ? false : PenguinEggBlock.isIceOrSnow(world, pos);
+//        }
+//    }
 
     //penguin escape danger goal
-
     static class PenguinEscapeDangerGoal extends EscapeDangerGoal{
         public PenguinEscapeDangerGoal(PenguinEntity penguin, double speed) {
             super(penguin, speed);

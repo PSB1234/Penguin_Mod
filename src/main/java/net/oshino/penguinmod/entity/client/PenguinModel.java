@@ -48,7 +48,7 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
-        ModelPartData base = modelPartData.addChild("base", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+        ModelPartData base = modelPartData.addChild("base", ModelPartBuilder.create(), ModelTransform.pivot(-1.0F, 24.0F, -3.50F));
 
         ModelPartData lower_body = base.addChild("lower_body", ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
 
@@ -78,16 +78,31 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
         return TexturedModelData.of(modelData, 48, 48);
     }
 
-
-    @Override
     public void setAngles(PenguinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
-        this.animateMovement(PenguinAnimation.WALKING, limbSwing, limbSwingAmount, 2f, 2f);
+        // Check if the penguin is in water
+        if (entity.isTouchingWater()) {
+            // Check if the penguin is moving
+            if (entity.getVelocity().lengthSquared() > 0) {
+                // Swimming animation
+                if(entity.isAttacking()){
+                    this.animateMovement(PenguinAnimation.SWIMMING_ATTACK, limbSwing, limbSwingAmount, 2f, 2f);
+                }else{
+                    this.animateMovement(PenguinAnimation.SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
+                }
+                this.base.pitch = (float) Math.toRadians(90);
 
-
+            } else {
+                // Reset body pitch when stationary in water
+                this.base.pitch = 0;
+            }
+        } else {
+            // Walking animation
+            this.animateMovement(PenguinAnimation.WALKING, limbSwing, limbSwingAmount, 2f, 2f);
+        }
     }
-     
+
     private void setHeadAngles(float headYaw, float headPitch) {
         headYaw = MathHelper.clamp(headYaw, -30.0F, 30.0F);
         headPitch = MathHelper.clamp(headPitch, -25.0F, 45.0F);
