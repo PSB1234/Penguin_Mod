@@ -16,6 +16,6 @@ public class ModEntities {
                     .dimensions(0.45f,0.7f).build()
             );
     public static void registerModEntities(){
-        PenguinMod.LOGGER.info("Registering Mod Entities for"+ PenguinMod.MOD_ID);
+        PenguinMod.LOGGER.info("Registering Mod Entities for "+ PenguinMod.MOD_ID);
     }
 }

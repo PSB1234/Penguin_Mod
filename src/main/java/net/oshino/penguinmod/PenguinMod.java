@@ -9,7 +9,7 @@ import net.oshino.penguinmod.entity.custom.PenguinEntity;
 import net.oshino.penguinmod.world.gen.MobEntitySpawns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import net.oshino.penguinmod.items.ModItems;
 public class PenguinMod implements ModInitializer {
 	public static final String MOD_ID = "penguin-mod";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -17,9 +17,8 @@ public class PenguinMod implements ModInitializer {
 	public void onInitialize() {
 
 		MobEntitySpawns.addPenguinSpawns();
-
 		ModEntities.registerModEntities();
-
+		ModItems.registerModItems();
 		FabricDefaultAttributeRegistry.register(ModEntities.PENGUIN, PenguinEntity.createAttributes());
 
 	}
