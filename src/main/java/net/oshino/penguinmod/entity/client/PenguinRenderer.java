@@ -30,4 +30,5 @@ public class PenguinRenderer extends MobEntityRenderer<PenguinEntity,PenguinMode
         super.render(livingEntity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
+
 }

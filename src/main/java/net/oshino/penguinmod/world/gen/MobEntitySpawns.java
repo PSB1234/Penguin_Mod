@@ -16,7 +16,7 @@ public class MobEntitySpawns {
                 BiomeSelectors.includeByKey(BiomeKeys.FROZEN_OCEAN,BiomeKeys.COLD_OCEAN,BiomeKeys.SNOWY_BEACH),
                 SpawnGroup.CREATURE,
                 ModEntities.PENGUIN,
-                300, 2, 10
+                30, 4, 10
         );
         SpawnRestriction.register(
                 ModEntities.PENGUIN,

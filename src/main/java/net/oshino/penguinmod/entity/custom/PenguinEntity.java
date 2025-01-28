@@ -1,6 +1,5 @@
 package net.oshino.penguinmod.entity.custom;
 
-import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.*;
@@ -18,18 +17,13 @@ import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
 import net.oshino.penguinmod.entity.ModEntities;
 import net.oshino.penguinmod.util.ModTags;
@@ -38,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
+
+
 
 public class PenguinEntity extends TameableEntity implements Angerable {
     // Penguin Digging Ice or Snow Counter
@@ -48,7 +44,10 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     private boolean isSwimming = false;
     // Animation State for the penguin
     public final AnimationState idleAnimationState = new AnimationState();
+    public final AnimationState swimIdleAnimationState = new AnimationState();
+
     private int idleAnimationTimeOut = 0;
+    private int swimIdleAnimationTimeOut = 0;
     //Penguin Digging Ice or Snow (Boolean)
     private static final TrackedData<Boolean> DIGGING_ICE_OR_SNOW = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     //TravelPos is random position for the penguin to travel to in water
@@ -203,12 +202,18 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         } else {
             --this.idleAnimationTimeOut;
         }
-
+        if (this.swimIdleAnimationTimeOut <= 0) {
+            this.swimIdleAnimationTimeOut = 40;
+            this.swimIdleAnimationState.start(this.age);
+        } else {
+            --this.swimIdleAnimationTimeOut;
+        }
     }
+
     //Baby penguin Scale is reduced
     @Override
     public float getScaleFactor() {
-        return this.isBaby() ? 0.3F : 1.0F;
+        return this.isBaby() ? 0.5F : 1.0F;
     }
 
     //Amphibious Navigation for the penguin
@@ -237,6 +242,33 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         return 1.0F;  // Less favorable for water or non-land positions
     }
 }
+    //Penguin Tick(Time in Minecraft) Function
+    @Override
+    public void tick() {
+        super.tick();
+        // Reduce hunger every 5 seconds
+        if (this.age % 100 == 0) {
+            this.reduceHunger();
+        }
+        // Update the animation states
+        if (this.getWorld().isClient) {
+            this.setupAnimationStates();
+        }
+        //changing hitbox depending on the penguin's state
+        if (this.isTouchingWater() && this.getVelocity().lengthSquared()>0) {
+            // Dimensions of the penguin (width and depth are equal here)
+            double height = 0.45f;
+            double width = 0.7f;
+            double offsetX = (width / 2);
+            double offsetZ = (width / 2);
+            // Set the bounding box dynamically
+            this.setBoundingBox(new Box(
+                    this.getX() - offsetX, this.getY(), this.getZ() - offsetZ, // Min corner
+                    this.getX() + offsetX, this.getY() + height, this.getZ() + offsetZ ));
+        }
+
+    }
+
     //Find the nearest Land
     public static BlockPos findNearestLand(Entity entity, int radius) {
         World world = entity.getWorld();
@@ -374,57 +406,48 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         }
     }
 
-    //Penguin Tick(Time in Minecraft) Function
-    @Override
-    public void tick() {
-        super.tick();
-        // Reduce hunger every 5 seconds
-        if (this.age % 100 == 0) {
-            this.reduceHunger();
-        }
-    }
 
     //Custom Penguin goals
     //Penguin mate Goal for breeding
-    static class MateGoal extends AnimalMateGoal {
-        private final PenguinEntity penguin;
-
-        MateGoal(PenguinEntity penguin, double speed) {
-            super(penguin, speed);
-            this.penguin = penguin;
-        }
-
-        @Override
-        public boolean canStart() {
-            return super.canStart() ;
-        }
-
-        @Override
-        protected void breed() {
-            ServerPlayerEntity serverPlayerEntity = this.animal.getLovingPlayer();
-            if (serverPlayerEntity == null && this.mate.getLovingPlayer() != null) serverPlayerEntity = this.mate.getLovingPlayer();
-
-            if (serverPlayerEntity != null) {
-                serverPlayerEntity.incrementStat(Stats.ANIMALS_BRED);
-                Criteria.BRED_ANIMALS.trigger(serverPlayerEntity, this.animal, this.mate, null);
-            }
-
-            this.animal.setBreedingAge(6000);
-            this.mate.setBreedingAge(6000);
-            this.animal.resetLoveTicks();
-            this.mate.resetLoveTicks();
-            Random random = this.animal.getRandom();
-            if (this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
-                this.world.spawnEntity(new ExperienceOrbEntity(this.world, this.animal.getX(), this.animal.getY(), this.animal.getZ(), random.nextInt(7) + 1));
-            }
-            PenguinEntity babyPenguin = ModEntities.PENGUIN.create(this.world);
-            if (babyPenguin != null) {
-                babyPenguin.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
-                babyPenguin.setBaby(true);
-                this.world.spawnEntity(babyPenguin);
-            }
-        }
-    }
+//    static class MateGoal extends AnimalMateGoal {
+//        private final PenguinEntity penguin;
+//
+//        MateGoal(PenguinEntity penguin, double speed) {
+//            super(penguin, speed);
+//            this.penguin = penguin;
+//        }
+//
+//        @Override
+//        public boolean canStart() {
+//            return super.canStart() ;
+//        }
+//
+//        @Override
+//        protected void breed() {
+//            ServerPlayerEntity serverPlayerEntity = this.animal.getLovingPlayer();
+//            if (serverPlayerEntity == null && this.mate.getLovingPlayer() != null) serverPlayerEntity = this.mate.getLovingPlayer();
+//
+//            if (serverPlayerEntity != null) {
+//                serverPlayerEntity.incrementStat(Stats.ANIMALS_BRED);
+//                Criteria.BRED_ANIMALS.trigger(serverPlayerEntity, this.animal, this.mate, null);
+//            }
+//
+//            this.animal.setBreedingAge(6000);
+//            this.mate.setBreedingAge(6000);
+//            this.animal.resetLoveTicks();
+//            this.mate.resetLoveTicks();
+//            Random random = this.animal.getRandom();
+//            if (this.world.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
+//                this.world.spawnEntity(new ExperienceOrbEntity(this.world, this.animal.getX(), this.animal.getY(), this.animal.getZ(), random.nextInt(7) + 1));
+//            }
+//            PenguinEntity babyPenguin = ModEntities.PENGUIN.create(this.world);
+//            if (babyPenguin != null) {
+//                babyPenguin.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
+//                babyPenguin.setBaby(true);
+//                this.world.spawnEntity(babyPenguin);
+//            }
+//        }
+//    }
     //Lay Egg Goal for the penguin
     //NEED TO MAKE PENGUIN EGG BLOCK
 //    static class LayEggGoal extends MoveToTargetPosGoal {
@@ -536,15 +559,19 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             this.penguin.getNavigation().stop();
         }
 
+        // Complete tryAttack method in PenguinHuntGoal
         @Override
         public void tick() {
             if (this.target != null) {
                 double distance = this.penguin.squaredDistanceTo(this.target);
                 if (distance < 2.0) {
-                    // Attack the target if close enough
+                    // Attack the target
                     this.penguin.tryAttack(this.target);
+                    // Feed penguin and increase hunger
+                    this.penguin.increaseHunger(20);
+                    this.stop(); // End hunt after attacking
                 } else {
-                    // Continue moving toward the target
+                    // Keep moving towards the target
                     this.penguin.getNavigation().startMovingTo(this.target, this.speed);
                 }
             }

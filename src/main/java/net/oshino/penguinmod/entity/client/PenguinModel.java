@@ -87,20 +87,28 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
             if (entity.getVelocity().lengthSquared() > 0) {
                 // Swimming animation
                 if(entity.isAttacking()){
-                    this.animateMovement(PenguinAnimation.SWIMMING_ATTACK, limbSwing, limbSwingAmount, 2f, 2f);
+                    this.animateMovement(PenguinAnimation.PENGUIN_UNDERWATER_ATTACK, limbSwing, limbSwingAmount, 2f, 2f);
                 }else{
-                    this.animateMovement(PenguinAnimation.SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
+                    this.animateMovement(PenguinAnimation.PENGUIN_SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
                 }
+
+                this.base.pivotZ = this.base.pivotZ + 6f;
+
+
+                // Set body pitch when swimming in water
                 this.base.pitch = (float) Math.toRadians(90);
+                this.head.pitch = (float) Math.toRadians(-90);
 
             } else {
                 // Reset body pitch when stationary in water
                 this.base.pitch = 0;
+                this.head.pitch = 0;
             }
         } else {
             // Walking animation
-            this.animateMovement(PenguinAnimation.WALKING, limbSwing, limbSwingAmount, 2f, 2f);
+            this.animateMovement(PenguinAnimation.PENGUIN_WALKING, limbSwing, limbSwingAmount, 2f, 2f);
         }
+        this.updateAnimation(entity.idleAnimationState,PenguinAnimation.PENGUIN_IDLE,ageInTicks,1F);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {
@@ -110,7 +118,6 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
         this.head.yaw = headYaw * 0.017453292F;
         this.head.pitch = headPitch * 0.017453292F;
     }
-
 
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
