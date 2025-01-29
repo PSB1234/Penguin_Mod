@@ -171,7 +171,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     @Override
     protected void initGoals() {
         this.goalSelector.add(1,new AnimalMateGoal(this, 1.0));
-//        this.goalSelector.add(1,new PenguinEntity.MateGoal(this, 1.0));
+//        this.goalSelector.add(1,new PenguinEntity.MateGoal(this, 1.0)); will add in future
         this.goalSelector.add(2,new PenguinEntity.PenguinHuntGoal(this, 1.2));
         this.goalSelector.add(3,new PenguinEntity.PenguinEscapeDangerGoal(this,1.2F));
         this.goalSelector.add(4,new TemptGoal(this,1.23D,stack ->stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
@@ -256,18 +256,20 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         }
         //changing hitbox depending on the penguin's state
         if (this.isTouchingWater() && this.getVelocity().lengthSquared()>0) {
-            // Dimensions of the penguin (width and depth are equal here)
+            // Dimensions of the penguin
             double height = 0.45f;
             double width = 0.7f;
             double offsetX = (width / 2);
             double offsetZ = (width / 2);
+
             // Set the bounding box dynamically
             this.setBoundingBox(new Box(
-                    this.getX() - offsetX, this.getY(), this.getZ() - offsetZ, // Min corner
-                    this.getX() + offsetX, this.getY() + height, this.getZ() + offsetZ ));
+                    this.getX() - offsetX, this.getY() + height, this.getZ() - offsetZ,
+                    this.getX() + offsetX, this.getY() + height*1.8, this.getZ() + offsetZ ));
         }
 
     }
+
 
     //Find the nearest Land
     public static BlockPos findNearestLand(Entity entity, int radius) {
@@ -294,6 +296,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
 
         return null; // No land found
     }
+
     // if the block is solid land
     private static boolean isSolidLand(BlockState blockState, World world, BlockPos checkPos) {
         return blockState.isOf(Blocks.GRASS_BLOCK) || blockState.isOf(Blocks.DIRT) ||
@@ -314,11 +317,11 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             // Check oxygen level and jump out if low
             // Threshold for low oxygen
             if (this.getAir() < 20) {
-                BlockPos pos = findNearestLand(this, 10);
-                if(pos != null){
+                BlockPos nearestLand = findNearestLand(this, 10);
+                 if(nearestLand != null){
                     this.setLandBound(true);
                     this.setTravelling(false);
-                    this.setTravelPos(pos);
+                    this.setTravelPos(nearestLand);
                     this.jumpOutOfWater();
                 }else{
                     BlockPos randomTravelPos = this.getBlockPos().add(
@@ -327,8 +330,10 @@ public class PenguinEntity extends TameableEntity implements Angerable {
                             this.random.nextInt(16) - 8
                     );
                     this.setTravelPos(randomTravelPos);
+                    this.jumpOutOfWater();
+
                 }
-                this.jumpOutOfWater();
+
             } else if (this.getTarget() == null && !this.isLandBound()) {
                 this.setVelocity(this.getVelocity().add(0.0D, -0.005D, 0.0D));
             }

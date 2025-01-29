@@ -22,4 +22,5 @@ public class PenguinMod implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(ModEntities.PENGUIN, PenguinEntity.createAttributes());
 
 	}
+
 }

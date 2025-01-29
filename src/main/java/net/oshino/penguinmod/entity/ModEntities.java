@@ -13,8 +13,9 @@ public class ModEntities {
             Registries.ENTITY_TYPE,
             Identifier.of(PenguinMod.MOD_ID,"penguin"),
             EntityType.Builder.create(PenguinEntity::new, SpawnGroup.CREATURE)
-                    .dimensions(0.45f,0.7f).build()
+                    .dimensions(.45f,0.7f).build()
             );
+
 
     public static void registerModEntities(){
         PenguinMod.LOGGER.info("Registering Mod Entities for "+ PenguinMod.MOD_ID);

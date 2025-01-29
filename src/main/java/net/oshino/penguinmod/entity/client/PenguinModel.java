@@ -93,7 +93,7 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
                 }
 
                 this.base.pivotZ = this.base.pivotZ + 6f;
-
+                this.base.pivotY = this.base.pivotY -5f;
 
                 // Set body pitch when swimming in water
                 this.base.pitch = (float) Math.toRadians(90);
