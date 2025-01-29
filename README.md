@@ -6,7 +6,7 @@ Welcome to the **Penguin Mod** project! This is a Minecraft mod developed using 
 ---
 
 ## 🚧 **Project Status**  
-This mod is currently in the **very early stages of development (pre-alpha)**. Expect frequent changes, incomplete features, and potential instability.  
+This mod is currently in the **very early stages of development (beta)**. Expect frequent changes, incomplete features, and potential instability.  
 
 ---
 
