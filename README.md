@@ -6,7 +6,7 @@ Welcome to the **Penguin Mod** project! This is a Minecraft mod developed using 
 ---
 
 ## 🚧 **Project Status**  
-This mod is currently in the **very early stages of development (pre-alpha)**. Expect frequent changes, incomplete features, and potential instability.  
+This mod is currently in the **very early stages of development (beta)**. Expect frequent changes, incomplete features, and potential instability.  
 
 ---
 
@@ -71,8 +71,6 @@ If you encounter any bugs or have suggestions, please report them in the [Issues
 
 ## 🌐 **Links**  
 - [Fabric API Documentation](https://fabricmc.net/)  
-- [Minecraft Modding Wiki](https://minecraft.fandom.com/wiki/Mods)  
-
 Thank you for your interest in Penguin Mod! 🐧 Stay tuned for updates and have fun!  
 ```  
 
