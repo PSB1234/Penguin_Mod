@@ -71,8 +71,6 @@ If you encounter any bugs or have suggestions, please report them in the [Issues
 
 ## 🌐 **Links**  
 - [Fabric API Documentation](https://fabricmc.net/)  
-- [Minecraft Modding Wiki](https://minecraft.fandom.com/wiki/Mods)  
-
 Thank you for your interest in Penguin Mod! 🐧 Stay tuned for updates and have fun!  
 ```  
 
