@@ -10,6 +10,7 @@ import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -20,12 +21,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.*;
 import net.oshino.penguinmod.entity.ModEntities;
+import net.oshino.penguinmod.sound.ModSounds;
 import net.oshino.penguinmod.util.ModTags;
 import org.jetbrains.annotations.Nullable;
 
@@ -618,11 +622,20 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     public void setAngryAt(@Nullable UUID angryAt) {
 
     }
-
     @Override
     public void chooseRandomAngerTime() {
 
     }
-
+    /* Sounds */
+    @Nullable
+    @Override
+    public SoundEvent getAmbientSound() {
+        return ModSounds.PENGUIN_AMBIENT;
+    }
+    @Nullable
+    @Override
+    public SoundEvent getHurtSound(DamageSource source) {
+        return  ModSounds.PENGUIN_HURT;
+    }
 
 }
