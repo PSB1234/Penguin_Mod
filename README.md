@@ -11,12 +11,10 @@ This mod is currently in the **very early stages of development (beta)**. Expect
 ---
 
 ## 🐧 **Features**  
-Planned features for Penguin Mod include:  
-- Penguins as new mobs with unique behaviors.  
-- Penguin habitats and ecosystems.  
-- New items and blocks inspired by the penguin theme.  
-- Fun mechanics and surprises centered around penguins!  
-
+Planned features for Penguin Mod that will be added later include:  
+- A custom mating system, including penguin egg-laying mechanics. 
+- The ability to tame and befriend penguins. 
+- Better/More Animations
 ---
 ### Model 
 ![Adele_Penguin](https://github.com/user-attachments/assets/13f55e22-b371-4891-a3b6-957ae9d60cee)
@@ -26,17 +24,17 @@ Planned features for Penguin Mod include:
 ![Adele_Penguin(1)](https://github.com/user-attachments/assets/f6b6e93c-049e-4821-87c0-e4ad2c7ad432)## 💻 **Getting Started**  
 ---
 ### Prerequisites  
-- **Minecraft**
+- **Minecraft**  : v1.21.1 
 - **Fabric API** 
-- **Fabric Loader**  
+- **Fabric Loader**  : 0.16.9 or higher
 
 
 
 ## 🛠️ **Building from Source**  
 
 ### Requirements  
-- JDK 21 
-- Gradle  
+- **JDK**: 21 or newer
+- **Gradle**  
 
 ### Steps  
 1. Clone the repository:  
@@ -72,6 +70,3 @@ If you encounter any bugs or have suggestions, please report them in the [Issues
 ## 🌐 **Links**  
 - [Fabric API Documentation](https://fabricmc.net/)  
 Thank you for your interest in Penguin Mod! 🐧 Stay tuned for updates and have fun!  
-```  
-
-Let me know if you'd like to customize or expand any section.
