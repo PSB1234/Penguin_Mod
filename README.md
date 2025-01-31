@@ -2,12 +2,6 @@
 # Penguin Mod - Java Fabric API Project  
 
 Welcome to the **Penguin Mod** project! This is a Minecraft mod developed using the Fabric API, introducing penguins and related content into the game.  
-
----
-
-## 🚧 **Project Status**  
-This mod is currently in the **very early stages of development (beta)**. Expect frequent changes, incomplete features, and potential instability.  
-
 ---
 
 ## 🐧 **Features**  
