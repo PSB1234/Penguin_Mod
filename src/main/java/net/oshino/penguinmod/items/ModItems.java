@@ -17,13 +17,7 @@ import java.util.List;
 
 public class ModItems {
     public static final Item PENGUIN_SPAWN_EGG = registerItem("penguin_spawn_egg",
-            new SpawnEggItem(ModEntities.PENGUIN, 0x9dc783, 0xbfaf5f, new Item.Settings()){
-                @Override
-                public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-                    tooltip.add(Text.of("tooltip.penguinmod.penguin_spawn_egg.tooltip"));
-                    super.appendTooltip(stack, context, tooltip, type);
-                }
-            });
+            new SpawnEggItem(ModEntities.PENGUIN, 0xffffff, 0x000000, new Item.Settings()));
 
 
     private static Item registerItem(String name, Item item) {
@@ -33,7 +27,7 @@ public class ModItems {
     public static void registerModItems() {
         PenguinMod.LOGGER.info("Registering Mod Items for " + PenguinMod.MOD_ID);
 
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> {
             entries.add(new ItemStack(PENGUIN_SPAWN_EGG));
         });
     }

@@ -16,10 +16,10 @@ public class PenguinMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	@Override
 	public void onInitialize() {
+		ModItems.registerModItems();
 		ModSounds.registerSounds();
 		MobEntitySpawns.addPenguinSpawns();
 		ModEntities.registerModEntities();
-		ModItems.registerModItems();
 		FabricDefaultAttributeRegistry.register(ModEntities.PENGUIN, PenguinEntity.createAttributes());
 
 	}

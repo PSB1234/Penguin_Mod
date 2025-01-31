@@ -1,6 +1,6 @@
 {
   "entity.penguinmod.penguin": "Penguin",
-  "items.penguinmod.penguin_spawn_egg": "Penguin Spawn Egg",
+  "item.penguinmod.penguin_spawn_egg": "Penguin Spawn Egg",
   "tag.item.penguinmod.penguin_food": "Penguin Food",
   "tooltip.penguinmod.penguin_spawn_egg.tooltip": "Spawns a Penguin"
 }
