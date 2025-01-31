@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "penguin-mod",
+	"id": "penguinmod",
 	"version": "${version}",
 	"name": "penguin mod",
 	"description": "Mod that brings the charm and playfulness of penguins into your game",
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/PSB1234/Penguin_Mod"
 	},
 	"license": "MIT",
-	"icon": "assets/penguin-mod/icon.png",
+	"icon": "assets/penguinmod/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -26,7 +26,7 @@
 		]
 	},
 	"mixins": [
-		"penguin-mod.mixins.json"
+      "penguinmod.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.16.9",

@@ -1,0 +1,14 @@
+{
+  "penguin_ambient": {
+    "subtitle": "sounds.penguinmod.penguin_ambient",
+    "sounds": [
+        "penguinmod:penguin_hurt"
+    ]
+  },
+    "penguin_hurt": {
+        "subtitle": "sounds.penguinmod.penguin_hurt",
+        "sounds": [
+            "penguinmod:penguin_hurt"
+        ]
+    }
+}

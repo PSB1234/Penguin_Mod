@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.oshino.penguinmod.PenguinMod;
 import net.oshino.penguinmod.entity.custom.PenguinEntity;
 
+
 public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel<T> {
     public static final EntityModelLayer PENGUIN = new EntityModelLayer(
             Identifier.of(PenguinMod.MOD_ID,"penguin"),
@@ -108,7 +109,6 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
             // Walking animation
             this.animateMovement(PenguinAnimation.PENGUIN_WALKING, limbSwing, limbSwingAmount, 2f, 2f);
         }
-        this.updateAnimation(entity.idleAnimationState,PenguinAnimation.PENGUIN_IDLE,ageInTicks,1F);
     }
 
     private void setHeadAngles(float headYaw, float headPitch) {
