@@ -10,5 +10,11 @@
         "sounds": [
             "penguinmod:penguin_hurt"
         ]
+    },
+    "penguin_death": {
+        "subtitle": "sounds.penguinmod.penguin_death",
+        "sounds": [
+            "penguinmod:penguin_death"
+        ]
     }
 }

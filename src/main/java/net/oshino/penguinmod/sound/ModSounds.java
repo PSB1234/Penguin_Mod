@@ -9,6 +9,7 @@ import net.oshino.penguinmod.PenguinMod;
 public class ModSounds {
     public static final SoundEvent PENGUIN_AMBIENT = registerSoundEvent("penguin_ambient");
     public static final SoundEvent PENGUIN_HURT = registerSoundEvent("penguin_hurt");
+    public static final SoundEvent PENGUIN_DEATH = registerSoundEvent("penguin_death");
 
     private static SoundEvent registerSoundEvent(String name) {
         Identifier id = Identifier.of(PenguinMod.MOD_ID, name);
