@@ -2,12 +2,6 @@
 # Penguin Mod - Java Fabric API Project  
 
 Welcome to the **Penguin Mod** project! This is a Minecraft mod developed using the Fabric API, introducing penguins and related content into the game.  
-
----
-
-## 🚧 **Project Status**  
-This mod is currently in the **very early stages of development (beta)**. Expect frequent changes, incomplete features, and potential instability.  
-
 ---
 
 ## 🐧 **Features**  
@@ -21,8 +15,13 @@ Planned features for Penguin Mod that will be added later include:
 ---
 ---
 ### Walking Animation
-![Adele_Penguin(1)](https://github.com/user-attachments/assets/f6b6e93c-049e-4821-87c0-e4ad2c7ad432)## 💻 **Getting Started**  
+![Image](https://github.com/user-attachments/assets/f49b23af-065d-483f-9808-932eaf6bcd58)
 ---
+---
+### Swimming Animation
+![Image](https://github.com/user-attachments/assets/11b0977f-fd08-4fd8-b5f1-80fd3f447ec3)
+---
+## 💻 **Getting Started**  
 ### Prerequisites  
 - **Minecraft**  : v1.21.1 
 - **Fabric API** 
