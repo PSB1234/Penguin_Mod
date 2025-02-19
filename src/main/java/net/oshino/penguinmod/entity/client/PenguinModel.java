@@ -82,6 +82,8 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
     public void setAngles(PenguinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
+        System.out.println("isSliding in animation: " + entity.isSliding());
+
         //Sliding Animation
         if (entity.isSliding()) {
             this.base.pivotZ = this.base.pivotZ + 6f;

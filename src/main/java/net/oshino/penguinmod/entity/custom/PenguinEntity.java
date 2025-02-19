@@ -130,7 +130,7 @@ public boolean isTravelling() {
         BlockPos pos = this.getBlockPos().down();
         BlockState blockState = this.getWorld().getBlockState(pos);
         return blockState.isOf(Blocks.ICE) || blockState.isOf(Blocks.PACKED_ICE) || blockState.isOf(Blocks.BLUE_ICE) ||
-                blockState.isOf(Blocks.FROSTED_ICE)|| blockState.isOf(Blocks.SNOW_BLOCK)|| blockState.isOf(Blocks.SNOW)|| blockState.isOf(Blocks.SNOW_BLOCK);
+                blockState.isOf(Blocks.FROSTED_ICE);
     }
     //Penguin is sliding on ice
     public boolean isSliding() {
@@ -281,8 +281,9 @@ public boolean isTravelling() {
         if (this.getWorld().isClient) {
             this.setupAnimationStates();
         }
+        System.out.println(" isSliding in entity: " + this.isSliding());
         //changing hitbox depending on the penguin's state
-        if (this.isTouchingWater() && this.getVelocity().lengthSquared()>0) {
+        if ((this.isTouchingWater() || this.isSliding())&& this.getVelocity().lengthSquared()>0) {
             // Dimensions of the penguin
             double height = 0.45f;
             double width = 0.7f;
