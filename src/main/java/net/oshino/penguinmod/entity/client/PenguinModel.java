@@ -82,35 +82,18 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
     public void setAngles(PenguinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
-        System.out.println("isSliding in animation: " + entity.isSliding());
 
-        //Sliding Animation
-        if (entity.isSliding()) {
-            this.base.pivotZ = this.base.pivotZ + 6f;
-            this.base.pivotY = this.base.pivotY - 5f;
-            // Set body pitch when swimming in water
-            this.base.pitch = (float) Math.toRadians(90);
-            this.head.pitch = (float) Math.toRadians(-90);
-            this.animateMovement(PenguinAnimation.PENGUIN_SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
-        }else {
-            // Reset body pitch when stationary in water
-            this.base.pitch = 0;
-            this.head.pitch = 0;
-            this.animateMovement(PenguinAnimation.PENGUIN_IDLE, limbSwing, limbSwingAmount, 2f, 2f);
-        }
         // Check if the penguin is in water
-        if (entity.isTouchingWater()) {
+        if (entity.isTouchingWater() || entity.isSliding()) {
             // Check if the penguin is moving
-            if (entity.getVelocity().lengthSquared() > 0) {
+            if (entity.getVelocity().lengthSquared() > 0.02) {
                 // Swimming animation
                 if(entity.isAttacking()){
                     this.animateMovement(PenguinAnimation.PENGUIN_UNDERWATER_ATTACK, limbSwing, limbSwingAmount, 2f, 2f);
                 }else{
                     this.animateMovement(PenguinAnimation.PENGUIN_SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
                 }
-
-                this.base.pivotZ = this.base.pivotZ + 6f;
-                this.base.pivotY = this.base.pivotY -5f;
+                    this.base.pivotZ = this.base.pivotZ + 6f;
 
                 // Set body pitch when swimming in water
                 this.base.pitch = (float) Math.toRadians(90);
@@ -122,6 +105,8 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
                 this.head.pitch = 0;
             }
         } else {
+            this.base.pitch = 0;
+            this.head.pitch = 0;
             // Walking animation
             this.animateMovement(PenguinAnimation.PENGUIN_WALKING, limbSwing, limbSwingAmount, 2f, 2f);
         }

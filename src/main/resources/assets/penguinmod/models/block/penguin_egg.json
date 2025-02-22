@@ -1,0 +1,62 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "penguin_egg",
+		"particle": "penguin_egg"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 23, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [6, 3, 9]},
+			"faces": {
+				"north": {"uv": [4, 4, 8, 9.75], "texture": "#0"},
+				"east": {"uv": [0, 4, 4, 9.75], "texture": "#0"},
+				"south": {"uv": [12, 4, 16, 9.75], "texture": "#0"},
+				"west": {"uv": [8, 4, 12, 9.75], "texture": "#0"},
+				"up": {"uv": [8, 4, 4, 0], "texture": "#0"},
+				"down": {"uv": [12, 0, 8, 4], "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [19, 0, 0],
+			"translation": [0, -0.25, 0],
+			"scale": [0.2, 0.2, 0.2]
+		},
+		"thirdperson_lefthand": {
+			"scale": [0.2, 0.2, 0.2]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, -106, 0],
+			"translation": [0, -0.25, 0],
+			"scale": [0.23, 0.22, 0.22]
+		},
+		"ground": {
+			"rotation": [0, 0, -90],
+			"translation": [-0.75, 0, 1],
+			"scale": [0.2, 0.2, 0.2]
+		},
+		"gui": {
+			"translation": [0.25, -3.5, 0],
+			"scale": [0.59, 0.59, 0.59]
+		},
+		"head": {
+			"translation": [0, -19.5, 0]
+		},
+		"fixed": {
+			"translation": [0, -2.25, 0],
+			"scale": [0.6, 0.6, 0.6]
+		}
+	},
+	"groups": [
+		{
+			"name": "base",
+			"origin": [8, 8, 8],
+			"color": 0,
+			"children": [0]
+		}
+	]
+}

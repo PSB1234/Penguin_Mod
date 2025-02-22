@@ -27,13 +27,13 @@ import net.oshino.penguinmod.entity.ModEntities;
 import net.oshino.penguinmod.entity.goals.PenguinEscapeGoal;
 import net.oshino.penguinmod.entity.goals.PenguinHuntGoal;
 import net.oshino.penguinmod.entity.goals.PenguinSlideOnIceGoal;
-import net.oshino.penguinmod.entity.goals.PenguinTemptGoal;
 import net.oshino.penguinmod.entity.utility.PenguinMoveControl;
 import net.oshino.penguinmod.entity.utility.PenguinSwimNavigation;
 import net.oshino.penguinmod.entity.utility.PenguinUtility;
 import net.oshino.penguinmod.sound.ModSounds;
 import net.oshino.penguinmod.util.ModTags;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -43,9 +43,14 @@ import static net.oshino.penguinmod.entity.utility.PenguinUtility.*;
 
 public class PenguinEntity extends TameableEntity implements Angerable {
     // Penguin Sliding State
-    private boolean isSliding = false;
+    private static final TrackedData<Boolean> SLIDING = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     //walking speed of the penguin
     private static final float WALKING_SPEED = 0.3F;
+    //Sliding Ice Cooldown
+    private static final TrackedData<Integer> SLIDING_COOLDOWN = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    //Penguin is hit by player
+    private static final TrackedData<Vector3f> HIT_BY_PLAYER_DIRECTION = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.VECTOR3F);
+    private static final TrackedData<Boolean> HIT_BY_PLAYER = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     // Penguin Hunger Level
     private int hungerLevel = 100;
     // Penguin Swimming State
@@ -99,7 +104,13 @@ public class PenguinEntity extends TameableEntity implements Angerable {
 //    void setHasEgg(boolean hasEgg) {
 //        this.dataTracker.set(HAS_EGG, hasEgg);
 //    }
-public boolean isTravelling() {
+    public Vector3f getHitByPlayerDirection() {
+        return this.dataTracker.get(HIT_BY_PLAYER_DIRECTION);
+    }
+    public void setHitByPlayerDirection(Vector3f direction) {
+        this.dataTracker.set(HIT_BY_PLAYER_DIRECTION, direction);
+    }
+    public boolean isTravelling() {
         return this.dataTracker.get(TRAVELLING);
     }
     void setTravelling(boolean travelling) {this.dataTracker.set(TRAVELLING, travelling);}
@@ -109,17 +120,16 @@ public boolean isTravelling() {
     void setLandBound(boolean landBound) {
         this.dataTracker.set(Land_Bound, landBound);
     }
-    public boolean isTraveling() {
-        return isTraveling;
-    }
 
-    public void setTraveling(boolean traveling) {
-        isTraveling = traveling;
-    }
     public boolean isSwimming() {
         return isSwimming;
     }
-
+    public boolean gotHitByPlayer() {
+        return this.dataTracker.get(HIT_BY_PLAYER);
+    }
+    public void setHitByPlayer(boolean hitByPlayer) {
+        this.dataTracker.set(HIT_BY_PLAYER, hitByPlayer);
+    }
     public void setSwimming(boolean swimming) {
         this.isSwimming = swimming;
     }
@@ -132,13 +142,21 @@ public boolean isTravelling() {
         return blockState.isOf(Blocks.ICE) || blockState.isOf(Blocks.PACKED_ICE) || blockState.isOf(Blocks.BLUE_ICE) ||
                 blockState.isOf(Blocks.FROSTED_ICE);
     }
+    //Penguin Sliding Cooldown
+    public int getSlidingCooldown() {
+        return this.dataTracker.get(SLIDING_COOLDOWN);
+    }
+    //Set Penguin Sliding Cooldown
+    public void setSlidingCooldown(int cooldown) {
+        this.dataTracker.set(SLIDING_COOLDOWN, cooldown);
+    }
     //Penguin is sliding on ice
     public boolean isSliding() {
-        return isSliding;
+        return this.dataTracker.get(SLIDING);
     }
     //set Penguin is sliding on ice
     public void setSliding(boolean sliding) {
-        this.isSliding = sliding;
+        this.dataTracker.set(SLIDING, sliding);
     }
 
     //Penguin Water Collision is Disabled
@@ -162,6 +180,10 @@ public boolean isTravelling() {
         builder.add(TRAVEL_POS, BlockPos.ORIGIN);
         builder.add(TRAVELLING, false);
         builder.add(Land_Bound, false);
+        builder.add(SLIDING, false);
+        builder.add(HIT_BY_PLAYER_DIRECTION, new Vector3f(0, 0, 0));
+        builder.add(SLIDING_COOLDOWN, 0);
+        builder.add(HIT_BY_PLAYER, false);
 //        builder.add(HAS_EGG, false);
         this.moveControl = new PenguinMoveControl(this,WALKING_SPEED);
 
@@ -236,7 +258,6 @@ public boolean isTravelling() {
             --this.swimIdleAnimationTimeOut;
         }
     }
-
     //Baby penguin Scale is reduced
     @Override
     public float getScaleFactor() {
@@ -277,14 +298,16 @@ public boolean isTravelling() {
         if (this.age % 100 == 0) {
             this.reduceHunger();
         }
+        //Sliding countdown reduction
+        if (this.getSlidingCooldown() > 0) {
+            this.setSlidingCooldown(this.getSlidingCooldown() - 1);
+        }
         // Update the animation states
         if (this.getWorld().isClient) {
             this.setupAnimationStates();
         }
-        System.out.println(" isSliding in entity: " + this.isSliding());
         //changing hitbox depending on the penguin's state
-        if ((this.isTouchingWater() || this.isSliding())&& this.getVelocity().lengthSquared()>0) {
-            // Dimensions of the penguin
+        if(this.isSliding() && this.isOnIce() && this.getVelocity().lengthSquared()>0.02 ||(this.isTouchingWater() && this.getVelocity().lengthSquared()>0.02)){
             double height = 0.45f;
             double width = 0.7f;
             double offsetX = (width / 2);
@@ -293,11 +316,10 @@ public boolean isTravelling() {
             // Set the bounding box dynamically
             this.setBoundingBox(new Box(
                     this.getX() - offsetX, this.getY() , this.getZ() - offsetZ,
-                    this.getX() + offsetX, this.getY() + height*1.8, this.getZ() + offsetZ ));
+                    this.getX() + offsetX, this.getY() + height, this.getZ() + offsetZ ));
         }
 
     }
-
 
 
     // Method to make the penguin jump out of water with a boost
