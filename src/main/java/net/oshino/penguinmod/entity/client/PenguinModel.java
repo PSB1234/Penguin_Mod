@@ -10,12 +10,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.oshino.penguinmod.PenguinMod;
 import net.oshino.penguinmod.entity.custom.PenguinEntity;
-
+/**
+ * The PenguinModel class defines the 3D model for the PenguinEntity.
+ * It extends SinglePartEntityModel to manage the different body parts and animations.
+ *
+ * @param <T> The type of entity this model is used for (PenguinEntity).
+ */
 
 public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel<T> {
+    /**
+     * Entity model layer for the penguin.
+     */
     public static final EntityModelLayer PENGUIN = new EntityModelLayer(
             Identifier.of(PenguinMod.MOD_ID,"penguin"),
             "main");
+    // Model parts
     private final ModelPart base;
     private final ModelPart lower_body;
     private final ModelPart feet;
@@ -30,6 +39,11 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
     private final ModelPart flippers;
     private final ModelPart left_flipper;
     private final ModelPart right_flipper;
+    /**
+     * Constructor to initialize the penguin model with its hierarchical structure.
+     *
+     * @param root The root ModelPart containing all child parts.
+     */
     public PenguinModel(ModelPart root) {
         this.base = root.getChild("base");
         this.lower_body = this.base.getChild("lower_body");
@@ -46,6 +60,11 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
         this.left_flipper = this.flippers.getChild("left_flipper");
         this.right_flipper = this.flippers.getChild("right_flipper");
     }
+    /**
+     * Defines the texture and model structure for the penguin.
+     *
+     * @return TexturedModelData defining the penguin model.
+     */
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
@@ -78,32 +97,21 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
         ModelPartData right_flipper = flippers.addChild("right_flipper", ModelPartBuilder.create().uv(0, 20).mirrored().cuboid(-0.5F, -0.5F, -2.5F, 1.0F, 7.0F, 5.0F, new Dilation(0.0F)).mirrored(false), ModelTransform.pivot(-2.5F, -7.5F, 3.5F));
         return TexturedModelData.of(modelData, 48, 48);
     }
-
+    /**
+     * Defines how the penguin moves based on its state (walking, swimming, attacking).
+     */
     public void setAngles(PenguinEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.getPart().traverse().forEach(ModelPart::resetTransform);
         this.setHeadAngles(netHeadYaw, headPitch);
-
         // Check if the penguin is in water
         if (entity.isTouchingWater() || entity.isSliding()) {
-            // Check if the penguin is moving
-            if (entity.getVelocity().lengthSquared() > 0.02) {
                 // Swimming animation
-                if(entity.isAttacking()){
-                    this.animateMovement(PenguinAnimation.PENGUIN_UNDERWATER_ATTACK, limbSwing, limbSwingAmount, 2f, 2f);
-                }else{
                     this.animateMovement(PenguinAnimation.PENGUIN_SWIMMING, limbSwing, limbSwingAmount, 2f, 2f);
-                }
                     this.base.pivotZ = this.base.pivotZ + 6f;
 
                 // Set body pitch when swimming in water
                 this.base.pitch = (float) Math.toRadians(90);
                 this.head.pitch = (float) Math.toRadians(-90);
-
-            } else {
-                // Reset body pitch when stationary in water
-                this.base.pitch = 0;
-                this.head.pitch = 0;
-            }
         } else {
             this.base.pitch = 0;
             this.head.pitch = 0;
@@ -111,7 +119,9 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
             this.animateMovement(PenguinAnimation.PENGUIN_WALKING, limbSwing, limbSwingAmount, 2f, 2f);
         }
     }
-
+    /**
+     * Controls the rotation of the penguin's head within limits.
+     */
     private void setHeadAngles(float headYaw, float headPitch) {
         headYaw = MathHelper.clamp(headYaw, -30.0F, 30.0F);
         headPitch = MathHelper.clamp(headPitch, -25.0F, 45.0F);
@@ -119,11 +129,16 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
         this.head.yaw = headYaw * 0.017453292F;
         this.head.pitch = headPitch * 0.017453292F;
     }
-
+    /**
+     * Renders the penguin model.
+     */
     @Override
     public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
         base.render(matrices, vertexConsumer, light, overlay,color);
     }
+    /**
+     * Returns the main model part.
+     */
     @Override
     public ModelPart getPart(){
         return base;

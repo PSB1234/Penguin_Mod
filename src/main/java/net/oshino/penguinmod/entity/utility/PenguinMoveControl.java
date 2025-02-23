@@ -4,16 +4,28 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.math.MathHelper;
 import net.oshino.penguinmod.entity.custom.PenguinEntity;
-
+/**
+ * Custom movement control for the {@link PenguinEntity}.
+ * This class handles movement both on land and in water, adjusting speed accordingly.
+ */
 public class PenguinMoveControl extends MoveControl {
     private final PenguinEntity penguin;
-
+    /**
+     * Constructs a movement controller for the penguin.
+     *
+     * @param penguin The penguin entity to control.
+     * @param speed   The base movement speed.
+     */
     public PenguinMoveControl(PenguinEntity penguin,float speed) {
         super(penguin);
         this.penguin = penguin;
         this.speed = speed;
     }
-
+    /**
+     * Updates the penguin's velocity based on its current environment.
+     * - In water: Increases speed and applies buoyancy.
+     * - On land: Reduces speed for waddling movement.
+     */
     private void updateVelocity() {
         if (this.penguin.isTouchingWater()) {
             // Penguins swim efficiently with increased speed and vertical buoyancy
@@ -25,6 +37,10 @@ public class PenguinMoveControl extends MoveControl {
         }
     }
 
+    /**
+     * Executes movement logic for the penguin each tick.
+     * Handles navigation adjustments, speed scaling, and movement transitions between water and land.
+     */
     @Override
     public void tick() {
         this.updateVelocity();

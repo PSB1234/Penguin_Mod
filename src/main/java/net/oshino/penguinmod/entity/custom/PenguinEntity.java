@@ -13,9 +13,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.FluidTags;
@@ -24,9 +22,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.*;
 import net.minecraft.world.*;
 import net.oshino.penguinmod.entity.ModEntities;
-import net.oshino.penguinmod.entity.goals.PenguinEscapeGoal;
-import net.oshino.penguinmod.entity.goals.PenguinHuntGoal;
-import net.oshino.penguinmod.entity.goals.PenguinSlideOnIceGoal;
+import net.oshino.penguinmod.entity.goals.*;
 import net.oshino.penguinmod.entity.utility.PenguinMoveControl;
 import net.oshino.penguinmod.entity.utility.PenguinSwimNavigation;
 import net.oshino.penguinmod.entity.utility.PenguinUtility;
@@ -34,14 +30,12 @@ import net.oshino.penguinmod.sound.ModSounds;
 import net.oshino.penguinmod.util.ModTags;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-
-import java.util.UUID;
 import java.util.function.Predicate;
-
 import static net.oshino.penguinmod.entity.utility.PenguinUtility.*;
 
 
-public class PenguinEntity extends TameableEntity implements Angerable {
+public class PenguinEntity extends AnimalEntity {
+    // ========= Tracked Data =========
     // Penguin Sliding State
     private static final TrackedData<Boolean> SLIDING = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     //walking speed of the penguin
@@ -58,8 +52,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     // Animation State for the penguin
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState swimIdleAnimationState = new AnimationState();
-    // Penguin is travelling or not
-    private boolean isTraveling = false;
+    //aimation timeouts the penguin
     private int idleAnimationTimeOut = 0;
     private int swimIdleAnimationTimeOut = 0;
     //TravelPos is random position for the penguin to travel to in water
@@ -68,15 +61,18 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     private static  final TrackedData<Boolean> TRAVELLING = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     // Penguin is in water mode or Land mode (Boolean)
     private static final TrackedData<Boolean> Land_Bound = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-//    //Penguin has Egg or not (Boolean)
-//    private static final TrackedData<Boolean> HAS_EGG = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    // Predicate for the penguin to follow the Mobs
+    //Penguin has Egg or not (Boolean)
+    private static final TrackedData<Boolean> HAS_EGG = DataTracker.registerData(PenguinEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    /** Predicate defining which entities are considered food by the penguin */
     private static final Predicate<LivingEntity> Penguin_Food = entity -> {
         EntityType<?> entityType = entity.getType();
         return entityType == EntityType.COD || entityType == EntityType.SALMON || entityType == EntityType.SQUID||
                 entityType == EntityType.GLOW_SQUID || entityType == EntityType.TROPICAL_FISH;
     };
-    //is Ice above
+    /**
+     * Checks if there is ice above the penguin.
+     * @return true if there is ice, false otherwise.
+     */
     private boolean isIceAbove() {
         BlockPos posAbove = this.getBlockPos().up();
         Block blockAbove = this.getWorld().getBlockState(posAbove).getBlock();
@@ -84,26 +80,32 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     }
 
 
-    // Constructor for the penguin entity
-    public PenguinEntity(EntityType<? extends PenguinEntity> entityType, World world) {
+    // ========= Constructors =========
+
+    /**
+     * Constructs a new Penguin entity.
+     * @param entityType The entity type of the penguin.
+     * @param world The world the penguin exists in.
+     */
+    public PenguinEntity(EntityType<? extends AnimalEntity> entityType, World world) {
         super(entityType, world);
         //Water Pathfinding is Enabled
         this.setPathfindingPenalty(PathNodeType.WATER, 0.0F);
     }
 
-    //getters and setters for the penguin's data tracker
-    BlockPos getTravelPos() {
+    // ========= Getters and Setters =========
+    public BlockPos getTravelPos() {
         return this.dataTracker.get(TRAVEL_POS);
     }
-    void setTravelPos(BlockPos pos) {
+    public void setTravelPos(BlockPos pos) {
         this.dataTracker.set(TRAVEL_POS, pos);
     }
-//    public boolean hasEgg() {
-//        return this.dataTracker.get(HAS_EGG);
-//    }
-//    void setHasEgg(boolean hasEgg) {
-//        this.dataTracker.set(HAS_EGG, hasEgg);
-//    }
+    public boolean hasEgg() {
+        return this.dataTracker.get(HAS_EGG);
+    }
+    public void setHasEgg(boolean hasEgg) {
+        this.dataTracker.set(HAS_EGG, hasEgg);
+    }
     public Vector3f getHitByPlayerDirection() {
         return this.dataTracker.get(HIT_BY_PLAYER_DIRECTION);
     }
@@ -113,11 +115,11 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     public boolean isTravelling() {
         return this.dataTracker.get(TRAVELLING);
     }
-    void setTravelling(boolean travelling) {this.dataTracker.set(TRAVELLING, travelling);}
-    boolean isLandBound() {
+    public void setTravelling(boolean travelling) {this.dataTracker.set(TRAVELLING, travelling);}
+    public boolean isLandBound() {
         return this.dataTracker.get(Land_Bound);
     }
-    void setLandBound(boolean landBound) {
+    public void setLandBound(boolean landBound) {
         this.dataTracker.set(Land_Bound, landBound);
     }
 
@@ -184,15 +186,14 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         builder.add(HIT_BY_PLAYER_DIRECTION, new Vector3f(0, 0, 0));
         builder.add(SLIDING_COOLDOWN, 0);
         builder.add(HIT_BY_PLAYER, false);
-//        builder.add(HAS_EGG, false);
+        builder.add(HAS_EGG, false);
         this.moveControl = new PenguinMoveControl(this,WALKING_SPEED);
-
     }
     //Penguin Data Tracker data stored for Save state
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
-//        nbt.putBoolean("HasEgg", this.hasEgg());
+        nbt.putBoolean("HasEgg", this.hasEgg());
         nbt.putInt("TravelPosX", this.getTravelPos().getX());
         nbt.putInt("TravelPosY", this.getTravelPos().getY());
         nbt.putInt("TravelPosZ", this.getTravelPos().getZ());
@@ -201,7 +202,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
-//        this.setHasEgg(nbt.getBoolean("HasEgg"));
+        this.setHasEgg(nbt.getBoolean("HasEgg"));
         int x = nbt.getInt("TravelPosX");
         int y = nbt.getInt("TravelPosY");
         int z = nbt.getInt("TravelPosZ");
@@ -214,28 +215,25 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         this.setTravelPos(BlockPos.ORIGIN);
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
+    // ========= AI and Behavior =========
 
-    // init Goals for the penguin
+    /**
+     * Initializes AI goals for the penguin.
+     */
     @Override
     protected void initGoals() {
-        this.goalSelector.add(1,new PenguinSlideOnIceGoal(this));
-        this.goalSelector.add(1,new AnimalMateGoal(this, 1.0));
-//        this.goalSelector.add(1,new PenguinEntity.MateGoal(this, 1.0)); will add in future
+        this.goalSelector.add(0,new PenguinSlideOnIceGoal(this));
+        this.goalSelector.add(1,new PenguinMateGoal(this, 1.0));
+        this.goalSelector.add(1,new PenguinLayEggGoal(this, 1.0));
         this.goalSelector.add(2,new PenguinHuntGoal(this, 1.0F));
         this.goalSelector.add(3,new PenguinEscapeGoal(this,1.0F));
         this.goalSelector.add(4,new TemptGoal(this,1.0F, (stack)-> stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
         this.goalSelector.add(5,new WanderAroundGoal(this,1.0F));
-        this.targetSelector.add(1, new TrackOwnerAttackerGoal(this));
-        this.targetSelector.add(2, new AttackWithOwnerGoal(this));
-        this.targetSelector.add(3, new RevengeGoal(this).setGroupRevenge());
-        this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
-        this.targetSelector.add(5, new ActiveTargetGoal<>(this, AbstractSkeletonEntity.class, false));
-        this.targetSelector.add(6, new UniversalAngerGoal<>(this, true));
     }
 
     // Register the data for the penguin
     public static DefaultAttributeContainer.Builder createAttributes(){
-        return MobEntity.createMobAttributes()
+        return AnimalEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH,10)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED,WALKING_SPEED)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
@@ -243,7 +241,11 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     }
 
 
-    // Animation States Manipulation
+    // ========= Animation =========
+
+    /**
+     * Updates animation states for the penguin.
+     */
     private void setupAnimationStates() {
         if (this.idleAnimationTimeOut <= 0) {
             this.idleAnimationTimeOut = 40;
@@ -263,7 +265,6 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     public float getScaleFactor() {
         return this.isBaby() ? 0.5F : 1.0F;
     }
-
     //Amphibious Navigation for the penguin
     @Override
     protected EntityNavigation createNavigation(World world) {
@@ -290,7 +291,9 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         return 1.0F;  // Less favorable for water or non-land positions
     }
 }
-    //Penguin Tick(Time in Minecraft) Function
+    /**
+     * Handles penguin behavior per game tick.
+     */
     @Override
     public void tick() {
         super.tick();
@@ -307,7 +310,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             this.setupAnimationStates();
         }
         //changing hitbox depending on the penguin's state
-        if(this.isSliding() && this.isOnIce() && this.getVelocity().lengthSquared()>0.02 ||(this.isTouchingWater() && this.getVelocity().lengthSquared()>0.02)){
+        if(this.isSliding() && this.isOnIce() && this.getVelocity().lengthSquared()>0.02 ||(this.isTouchingWater())){
             double height = 0.45f;
             double width = 0.7f;
             double offsetX = (width / 2);
@@ -322,11 +325,16 @@ public class PenguinEntity extends TameableEntity implements Angerable {
     }
 
 
+
+    // ========= Movement =========
+
     // Method to make the penguin jump out of water with a boost
     private void jumpOutOfWater() {
         this.setVelocity(this.getVelocity().add(0.0D, 0.3D, 0.0D));
     }
-    //Penguin travel
+    /**
+     * Handles penguin movement in water.
+     */
     @Override
     public void travel(Vec3d movementInput) {
         if (this.isLogicalSideForUpdatingMovement() && this.isTouchingWater()) {
@@ -335,9 +343,9 @@ public class PenguinEntity extends TameableEntity implements Angerable {
             this.setVelocity(this.getVelocity().multiply(0.9D));
 
             // Check oxygen level and escape if it's low
-            if (this.getAir() < 20) {
+            if (this.getAir() < 50) {
                 BlockPos nearestOpening = findNearestLand(this, 20);
-                if(nearestOpening!=null) {
+                if (nearestOpening != null) {
                     this.setLandBound(false);
                     this.setTravelling(true);
                     this.setTravelPos(nearestOpening);
@@ -346,7 +354,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
                         this.jumpOutOfWater();
                         PenguinUtility.breakIceAbove(this);
 
-                    }else{
+                    } else {
                         this.jumpOutOfWater();
                     }
                 }
@@ -361,30 +369,7 @@ public class PenguinEntity extends TameableEntity implements Angerable {
         }
     }
 
-    @Override
-    public int getAngerTime() {
-        return 0;
-    }
-
-    @Override
-    public void setAngerTime(int angerTime) {
-
-    }
-
-    @Override
-    public @Nullable UUID getAngryAt() {
-        return null;
-    }
-
-    @Override
-    public void setAngryAt(@Nullable UUID angryAt) {
-
-    }
-    @Override
-    public void chooseRandomAngerTime() {
-
-    }
-    /* Sounds */
+    // ========= Sounds =========
     @Nullable
     @Override
     public SoundEvent getAmbientSound() {

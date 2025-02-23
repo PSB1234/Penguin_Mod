@@ -17,7 +17,6 @@ public class PenguinMod implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	@Override
 	public void onInitialize() {
-
 		ModBlocks.registerModBlocks();
 		ModItems.registerModItems();
 		ModSounds.registerSounds();

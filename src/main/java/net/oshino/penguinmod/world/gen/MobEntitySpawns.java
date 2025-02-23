@@ -13,10 +13,10 @@ public class MobEntitySpawns {
     public static void addPenguinSpawns() {
         // Add penguin spawns to the overworld
         BiomeModifications.addSpawn(
-                BiomeSelectors.includeByKey(BiomeKeys.FROZEN_OCEAN,BiomeKeys.COLD_OCEAN,BiomeKeys.SNOWY_BEACH),
+                BiomeSelectors.includeByKey(BiomeKeys.FROZEN_OCEAN,BiomeKeys.COLD_OCEAN,BiomeKeys.SNOWY_BEACH,BiomeKeys.FROZEN_RIVER),
                 SpawnGroup.CREATURE,
                 ModEntities.PENGUIN,
-                30, 4, 10
+                10, 4,8
         );
         SpawnRestriction.register(
                 ModEntities.PENGUIN,
