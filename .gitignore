@@ -1,71 +1,40 @@
-# Compiled class files
-*.class
+# gradle
 
-# Log files
-*.log
+.gradle/
+build/
+out/
+classes/
 
-# Temporary files
-*.tmp
-*.bak
-*.swp
+# eclipse
 
-# Compiled Java binaries
-/bin/
-/build/
-/out/
+*.launch
 
-# IntelliJ IDEA project files
+# idea
+
 .idea/
 *.iml
+*.ipr
+*.iws
 
-# Eclipse project files
-.project
-.classpath
+# vscode
+
 .settings/
-
-# VS Code settings
 .vscode/
+bin/
+.classpath
+.project
 
-# Maven build files
-/target/
+# macos
 
-# Gradle build files
-/.gradle/
+*.DS_Store
 
-# Fabric API-specific files
-/.fabric/
-/run/
-/logs/
+# fabric
 
-# Minecraft-related files
-/.mixin.out/
-.minecraft/
-usercache.json
-usernamecache.json
+run/
 
-# Mod-related files
-/.gradletaskcache/
-/run/logs/
-/run/crash-reports/
-/run/resourcepacks/
-/run/mods/
-#assets
-/resources/assets/penguin-mod/textures
-# OS-generated files
-.DS_Store
-Thumbs.db
-*.~lock.*
+# java
 
-# IDE auto-generated files
-*.idea/
-
-# Dependency cache
-/caches/
-
-# Configuration files
-*.conf
-
-# Other ignored files
-*.jar
-*.war
-*.ear
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr

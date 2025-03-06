@@ -133,8 +133,8 @@ public class PenguinModel<T extends PenguinEntity> extends SinglePartEntityModel
      * Renders the penguin model.
      */
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, int color) {
-        base.render(matrices, vertexConsumer, light, overlay,color);
+    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+        this.base.render(matrices, vertices, light, overlay, red, green, blue, alpha);
     }
     /**
      * Returns the main model part.

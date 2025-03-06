@@ -12,6 +12,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -23,11 +24,13 @@ import net.minecraft.world.WorldEvents;
 import net.minecraft.world.event.GameEvent;
 import net.oshino.penguinmod.entity.ModEntities;
 import net.oshino.penguinmod.entity.custom.PenguinEntity;
+
+
+
 /**
  * Custom block representing a penguin egg.
  */
 public class PenguinEggBlock extends Block {
-    public static MapCodec<PenguinEggBlock> CODEC = createCodec(PenguinEggBlock::new);
     public static final IntProperty HATCH = IntProperty.of("hatch", 0, 2); // 0, 2 - stages of hatching
 
     /**
@@ -40,10 +43,7 @@ public class PenguinEggBlock extends Block {
         this.setDefaultState(this.stateManager.getDefaultState().with(HATCH, 0));
 
     }
-    @Override
-    protected MapCodec<? extends Block> getCodec() {
-        return CODEC; // Register properties here
-    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(HATCH);
@@ -95,9 +95,6 @@ public class PenguinEggBlock extends Block {
     }
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient()) {
-            world.syncWorldEvent(WorldEvents.TURTLE_EGG_PLACED, pos, 0);
-        }
 
         int i = 24000;
         int j = i / 3;
@@ -106,7 +103,7 @@ public class PenguinEggBlock extends Block {
     }
 
     @Override
-    public boolean canPathfindThrough(BlockState state, NavigationType type) {
+    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
         return false;
     }
 

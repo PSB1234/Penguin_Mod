@@ -20,7 +20,7 @@ public class MobEntitySpawns {
         );
         SpawnRestriction.register(
                 ModEntities.PENGUIN,
-                SpawnLocationTypes.ON_GROUND,
+                SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,
                 AnimalEntity::isValidNaturalSpawn
         );

@@ -43,6 +43,6 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(ModItems.PENGUIN_SPAWN_EGG,
-                new Model(Optional.of(Identifier.of("item/template_spawn_egg")), Optional.empty()));
+                new Model(Optional.of(new Identifier("minecraft", "item/template_spawn_egg")), Optional.empty()));
     }
 }

@@ -16,6 +16,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
@@ -69,6 +70,7 @@ public class PenguinEntity extends AnimalEntity {
         return entityType == EntityType.COD || entityType == EntityType.SALMON || entityType == EntityType.SQUID||
                 entityType == EntityType.GLOW_SQUID || entityType == EntityType.TROPICAL_FISH;
     };
+    public static final Ingredient FEEDING_ITEM = Ingredient.fromTag(ModTags.Items.PENGUIN_FOOD);
     /**
      * Checks if there is ice above the penguin.
      * @return true if there is ice, false otherwise.
@@ -177,16 +179,16 @@ public class PenguinEntity extends AnimalEntity {
     }
     // Initialize the data tracker for the penguin
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(TRAVEL_POS, BlockPos.ORIGIN);
-        builder.add(TRAVELLING, false);
-        builder.add(Land_Bound, false);
-        builder.add(SLIDING, false);
-        builder.add(HIT_BY_PLAYER_DIRECTION, new Vector3f(0, 0, 0));
-        builder.add(SLIDING_COOLDOWN, 0);
-        builder.add(HIT_BY_PLAYER, false);
-        builder.add(HAS_EGG, false);
+    protected void initDataTracker() {
+        super.initDataTracker();
+        this.dataTracker.startTracking(TRAVEL_POS, BlockPos.ORIGIN);
+        this.dataTracker.startTracking(TRAVELLING, false);
+        this.dataTracker.startTracking(Land_Bound, false);
+        this.dataTracker.startTracking(SLIDING, false);
+        this.dataTracker.startTracking(HIT_BY_PLAYER_DIRECTION, new Vector3f(0, 0, 0));
+        this.dataTracker.startTracking(SLIDING_COOLDOWN, 0);
+        this.dataTracker.startTracking(HIT_BY_PLAYER, false);
+        this.dataTracker.startTracking(HAS_EGG, false);
         this.moveControl = new PenguinMoveControl(this,WALKING_SPEED);
     }
     //Penguin Data Tracker data stored for Save state
@@ -211,10 +213,11 @@ public class PenguinEntity extends AnimalEntity {
     //Penguin Data Initialization
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityDataTag) {
         this.setTravelPos(BlockPos.ORIGIN);
-        return super.initialize(world, difficulty, spawnReason, entityData);
+        return super.initialize(world, difficulty, spawnReason, entityData,entityDataTag);
     }
+
     // ========= AI and Behavior =========
 
     /**
@@ -227,7 +230,7 @@ public class PenguinEntity extends AnimalEntity {
         this.goalSelector.add(1,new PenguinLayEggGoal(this, 1.0));
         this.goalSelector.add(2,new PenguinHuntGoal(this, 1.0F));
         this.goalSelector.add(3,new PenguinEscapeGoal(this,1.0F));
-        this.goalSelector.add(4,new TemptGoal(this,1.0F, (stack)-> stack.isIn(ModTags.Items.PENGUIN_FOOD),false));
+        this.goalSelector.add(4,new TemptGoal(this,1.0F, FEEDING_ITEM,false));
         this.goalSelector.add(5,new WanderAroundGoal(this,1.0F));
     }
 
