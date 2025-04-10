@@ -6,10 +6,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.oshino.penguinmod.PenguinMod;
-import net.oshino.penguinmod.block.ModBlocks;
 import net.oshino.penguinmod.entity.ModEntities;
 
-import java.util.List;
 /**
  * Handles the registration of custom items in the Penguin Mod.
  */
@@ -21,12 +19,7 @@ public class ModItems {
      */
     public static final Item PENGUIN_SPAWN_EGG = registerItem("penguin_spawn_egg",
             new SpawnEggItem(ModEntities.PENGUIN, 0xffffff, 0x000000, new Item.Settings()));
-    /**
-     * The block item representing a penguin egg.
-     * This item allows players to place the penguin egg as a block.
-     */
-    public static final Item PENGUIN_EGG = registerItem("penguin_egg",
-            new BlockItem(ModBlocks.PENGUIN_EGG, new Item.Settings()));
+
     /**
      * Registers an item with the specified name and item instance.
      *
@@ -35,7 +28,7 @@ public class ModItems {
      * @return The registered item.
      */
     private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(PenguinMod.MOD_ID, name), item);
+        return Registry.register(Registries.ITEM, new Identifier(PenguinMod.MOD_ID, name), item);
     }
     /**
      * Registers all mod items and adds them to appropriate creative mode item groups.
@@ -48,10 +41,7 @@ public class ModItems {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> {
             entries.add(new ItemStack(PENGUIN_SPAWN_EGG));
         });
-        // Add Penguin Egg to the Natural Blocks tab
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(entries -> {
-            entries.add(new ItemStack(PENGUIN_EGG));
-        });
+
     }
 
 }

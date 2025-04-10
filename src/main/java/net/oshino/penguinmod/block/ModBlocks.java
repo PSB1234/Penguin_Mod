@@ -1,9 +1,12 @@
 package net.oshino.penguinmod.block;
 
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -26,7 +29,7 @@ public class ModBlocks {
      * @return The registered block.
      */
     private static Block registerBlock(String name, Block block) {
-        registerBlockItems(name, block);// Registers the block item representation.
+        registerBlockItems(name, block);
         return Registry.register(Registries.BLOCK, Identifier.of(PenguinMod.MOD_ID, name), block);
     }
     /**
@@ -44,5 +47,10 @@ public class ModBlocks {
      * This method should be called during mod initialization.
      */
     public static void registerModBlocks() {
-        PenguinMod.LOGGER.info("Registering Mod blocks for: " + PenguinMod.MOD_ID);}
+        PenguinMod.LOGGER.info("Registering Mod blocks for: " + PenguinMod.MOD_ID);
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(entries -> {
+            entries.add(new ItemStack(PENGUIN_EGG));
+        });
+    }
+
 }

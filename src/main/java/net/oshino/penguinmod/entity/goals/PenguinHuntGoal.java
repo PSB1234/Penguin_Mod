@@ -98,7 +98,7 @@ public class PenguinHuntGoal extends Goal {
         );
         if (!nearbyEntities.isEmpty()) {
             // Select the first available target
-            this.target = nearbyEntities.getFirst();
+            this.target = nearbyEntities.get(0);
             return true;
         }
         return false;
