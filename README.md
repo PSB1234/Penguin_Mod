@@ -55,25 +55,12 @@ Here's how you can update your README file to include steps on where to place th
 ### Swimming Animation
 ![Image](https://github.com/user-attachments/assets/11b0977f-fd08-4fd8-b5f1-80fd3f447ec3)
 ---
-## 🤝 **Contributing**  
-Contributions are welcome! If you’d like to help:  
-1. Fork the repository.  
-2. Create a feature branch:  
-   ```bash  
-   git checkout -b feature/your-feature-name  
-   ```  
-3. Commit your changes and push the branch.  
-4. Open a pull request describing your changes.  
-
----
 
 ## 🐛 **Issues**  
 If you encounter any bugs or have suggestions, please report them in the [Issues](https://github.com/PSB1234/Penguin_Mod/issues) section.  
 
 
 
-## 🌐 **Links**  
-- [Fabric API Documentation](https://fabricmc.net/)
 ## **Download Links**
 - [Modrinth](https://modrinth.com/mod/little-penguins)
 - [Curseforge](https://www.curseforge.com/minecraft/mc-mods/little-penguins)
